@@ -1,0 +1,55 @@
+#jinja2: lstrip_blocks: "True"
+[Unit]
+Description=labelstudio ({{ labelstudio_identifier }})
+{% for service in labelstudio_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ labelstudio_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ labelstudio_identifier }} 2>/dev/null || true'
+
+{# We mount a tmpfs at /tmp to allow labelstudio migrations to run. #}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+			--rm \
+			--name={{ labelstudio_identifier }} \
+			--log-driver=none \
+			--user={{ labelstudio_uid }}:{{ labelstudio_gid }} \
+			--cap-drop=ALL \
+			--read-only \
+			--network={{ labelstudio_container_network }} \
+			{% if labelstudio_container_http_bind_port %}
+			-p {{ labelstudio_container_http_bind_port }}:8080 \
+			{% endif %}
+			--env-file={{ labelstudio_base_path }}/env \
+			--label-file={{ labelstudio_base_path }}/labels \
+			--health-interval={{ labelstudio_container_health_interval }} \
+			--tmpfs=/tmp:rw,noexec,nosuid,size=100m \
+			--mount type=bind,src={{ labelstudio_data_path }},dst=/label-studio/data \
+			{% for volume in labelstudio_container_additional_volumes %}
+			--mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options | default('') else '' }} \
+			{% endfor %}
+			{% for arg in labelstudio_container_extra_arguments %}
+			{{ arg }} \
+			{% endfor %}
+			{{ labelstudio_container_image }}
+
+{% for network in labelstudio_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ labelstudio_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ labelstudio_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ labelstudio_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ labelstudio_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ labelstudio_identifier }}
+
+[Install]
+WantedBy=multi-user.target

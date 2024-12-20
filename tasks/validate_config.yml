@@ -1,0 +1,42 @@
+---
+
+- name: Fail if required labelstudio settings not defined
+  ansible.builtin.fail:
+    msg: >
+      You need to define a required configuration setting (`{{ item.name }}`).
+  when: "item.when | bool and vars[item.name] | length == 0"
+  with_items:
+    - {'name': 'labelstudio_identifier', when: true}
+    - {'name': 'labelstudio_uid', when: true}
+    - {'name': 'labelstudio_gid', when: true}
+    - {'name': 'labelstudio_hostname', when: true}
+    - {'name': 'labelstudio_path_prefix', when: true}
+    - {'name': 'labelstudio_container_network', when: true}
+    - {'name': 'labelstudio_container_labels_traefik_compression_middleware_name', when: "{{ labelstudio_container_labels_traefik_compression_middleware_enabled }}"}
+    - {'name': 'labelstudio_environment_variables_postgre_name', when: "{{ labelstudio_postgre_backend_enabled }}"}
+    - {'name': 'labelstudio_environment_variables_postgre_user', when: "{{ labelstudio_postgre_backend_enabled }}"}
+    - {'name': 'labelstudio_environment_variables_postgre_password', when: "{{ labelstudio_postgre_backend_enabled }}"}
+    - {'name': 'labelstudio_environment_variables_postgre_port', when: "{{ labelstudio_postgre_backend_enabled }}"}
+    - {'name': 'labelstudio_environment_variables_postgre_host', when: "{{ labelstudio_postgre_backend_enabled }}"}
+    - {'name': 'labelstudio_environment_variables_minio_root_user', when: "{{ labelstudio_minio_backend_enabled }}"}
+    - {'name': 'labelstudio_environment_variables_minio_root_password', when: "{{ labelstudio_minio_backend_enabled }}"}
+
+- when: labelstudio_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if required labelstudio Traefik settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "vars[item] == ''"
+      with_items:
+        - labelstudio_container_labels_traefik_hostname
+        - labelstudio_container_labels_traefik_path_prefix
+
+    # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
+    # Knowing that `labelstudio_container_labels_traefik_path_prefix` does not end with a slash
+    # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
+    - name: Fail if labelstudio_container_labels_traefik_path_prefix ends with a slash
+      ansible.builtin.fail:
+        msg: >-
+          labelstudio_container_labels_traefik_path_prefix (`{{ labelstudio_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/labelstudio`).
+      when: "labelstudio_container_labels_traefik_path_prefix != '/' and labelstudio_container_labels_traefik_path_prefix[-1] == '/'"

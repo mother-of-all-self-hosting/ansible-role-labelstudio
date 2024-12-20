@@ -1,0 +1,20 @@
+---
+
+- block:
+    - when: labelstudio_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+
+    - when: labelstudio_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+  tags:
+    - setup-all
+    - setup-labelstudio
+    - install-all
+    - install-labelstudio
+
+- block:
+    - when: not labelstudio_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+  tags:
+    - setup-all
+    - setup-labelstudio
