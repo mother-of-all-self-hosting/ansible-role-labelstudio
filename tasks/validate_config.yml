@@ -9,7 +9,6 @@
     - {'name': 'labelstudio_identifier', when: true}
     - {'name': 'labelstudio_uid', when: true}
     - {'name': 'labelstudio_gid', when: true}
-    - {'name': 'labelstudio_hostname', when: true}
     - {'name': 'labelstudio_path_prefix', when: true}
     - {'name': 'labelstudio_container_network', when: true}
     - {'name': 'labelstudio_container_labels_traefik_compression_middleware_name', when: "{{ labelstudio_container_labels_traefik_compression_middleware_enabled }}"}

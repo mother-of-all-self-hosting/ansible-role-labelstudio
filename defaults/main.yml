@@ -13,9 +13,6 @@ labelstudio_version: latest
 
 labelstudio_scheme: https
 
-# The hostname at which labelstudio is served.
-labelstudio_hostname: ''
-
 # The path at which labelstudio is served.
 # This value must either be `/` or not end with a slash (e.g. `/labelstudio`).
 labelstudio_path_prefix: /
