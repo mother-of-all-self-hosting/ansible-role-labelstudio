@@ -12,11 +12,11 @@
     - {'name': 'labelstudio_path_prefix', when: true}
     - {'name': 'labelstudio_container_network', when: true}
     - {'name': 'labelstudio_container_labels_traefik_compression_middleware_name', when: "{{ labelstudio_container_labels_traefik_compression_middleware_enabled }}"}
-    - {'name': 'labelstudio_environment_variables_postgre_name', when: "{{ labelstudio_postgre_backend_enabled }}"}
-    - {'name': 'labelstudio_environment_variables_postgre_user', when: "{{ labelstudio_postgre_backend_enabled }}"}
-    - {'name': 'labelstudio_environment_variables_postgre_password', when: "{{ labelstudio_postgre_backend_enabled }}"}
-    - {'name': 'labelstudio_environment_variables_postgre_port', when: "{{ labelstudio_postgre_backend_enabled }}"}
-    - {'name': 'labelstudio_environment_variables_postgre_host', when: "{{ labelstudio_postgre_backend_enabled }}"}
+    - {'name': 'labelstudio_database_name', when: "{{ labelstudio_postgre_backend_enabled }}"}
+    - {'name': 'labelstudio_database_username', when: "{{ labelstudio_postgre_backend_enabled }}"}
+    - {'name': 'labelstudio_database_password', when: "{{ labelstudio_postgre_backend_enabled }}"}
+    - {'name': 'labelstudio_database_port', when: "{{ labelstudio_postgre_backend_enabled }}"}
+    - {'name': 'labelstudio_database_hostname', when: "{{ labelstudio_postgre_backend_enabled }}"}
     - {'name': 'labelstudio_environment_variables_minio_root_user', when: "{{ labelstudio_minio_backend_enabled }}"}
     - {'name': 'labelstudio_environment_variables_minio_root_password', when: "{{ labelstudio_minio_backend_enabled }}"}
 

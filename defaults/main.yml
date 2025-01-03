@@ -125,15 +125,15 @@ labelstudio_postgre_backend_enabled: false
 # Controls the DJANGO_DB environment variable
 labelstudio_environment_variables_django_db: default
 # Controls the POSTGRE_NAME environment variable
-labelstudio_environment_variables_postgre_name: ""
+labelstudio_database_name: ""
 # Controls the POSTGRE_USER environment variable
-labelstudio_environment_variables_postgre_user: ""
+labelstudio_database_username: ""
 # Controls the POSTGRE_PASSWORD environment variable
-labelstudio_environment_variables_postgre_password: ""
+labelstudio_database_password: ""
 # Controls the POSTGRE_PORT environment variable
-labelstudio_environment_variables_postgre_port: 5432
+labelstudio_database_port: 5432
 # Controls the POSTGRE_HOST environment variable
-labelstudio_environment_variables_postgre_host: ""
+labelstudio_database_hostname: ""
 
 # Controls if Minio is used as storage backend
 labelstudio_minio_backend_enabled: false
