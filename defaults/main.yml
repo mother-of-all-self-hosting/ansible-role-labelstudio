@@ -2,7 +2,7 @@
 
 # Project source code URL: https://github.com/labelstudio/labelstudio
 
-labelstudio_enabled: true
+labelstudio_enabled: false
 
 labelstudio_identifier: labelstudio
 
@@ -124,7 +124,7 @@ labelstudio_container_extra_arguments: []
 
 
 # Controls if Postgre SQL is used as database backend (recommended)
-labelstudio_postgre_backend_enabled: true
+labelstudio_postgre_backend_enabled: false
 # Controls the DJANGO_DB environment variable
 labelstudio_environment_variables_django_db: default
 # Controls the POSTGRE_NAME environment variable
