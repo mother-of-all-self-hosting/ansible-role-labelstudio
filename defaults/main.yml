@@ -145,6 +145,9 @@ labelstudio_environment_variables_minio_root_user: minio_admin_do_not_use_in_pro
 # Controls the MINIO_ROOT_PASSWORD environment variable
 labelstudio_environment_variables_minio_root_password: minio_admin_do_not_use_in_production
 
+# Additional environment variables.
+labelstudio_environment_variables_additional_variables: ""
+
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
 #
