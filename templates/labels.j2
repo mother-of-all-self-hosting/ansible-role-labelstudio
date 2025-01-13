@@ -50,7 +50,7 @@ traefik.http.routers.{{ labelstudio_identifier }}.tls={{ labelstudio_container_l
 traefik.http.routers.{{ labelstudio_identifier }}.tls.certResolver={{ labelstudio_container_labels_traefik_tls_certResolver }}
 {% endif %}
 
-traefik.http.services.{{ labelstudio_identifier }}.loadbalancer.server.port=4533
+traefik.http.services.{{ labelstudio_identifier }}.loadbalancer.server.port=8080
 {% endif %}
 
 {{ labelstudio_container_labels_additional_labels }}
