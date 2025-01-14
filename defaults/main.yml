@@ -127,6 +127,8 @@ labelstudio_container_extra_arguments: []
 labelstudio_postgre_backend_enabled: false
 # Controls the DJANGO_DB environment variable
 labelstudio_environment_variables_django_db: default
+# Controls the SSRF_PROTECTION_ENABLED django env var
+labelstudio_environment_variables_ssrf_protection_enabled: true
 # Controls the POSTGRE_NAME environment variable
 labelstudio_database_name: ""
 # Controls the POSTGRE_USER environment variable
