@@ -20,6 +20,8 @@
     - {'name': 'labelstudio_database_hostname', when: "{{ labelstudio_postgre_backend_enabled }}"}
     - {'name': 'labelstudio_environment_variables_minio_root_user', when: "{{ labelstudio_minio_backend_enabled }}"}
     - {'name': 'labelstudio_environment_variables_minio_root_password', when: "{{ labelstudio_minio_backend_enabled }}"}
+    - {'name': 'labelstudio_environment_variables_username', when: "{{ labelstudio_environment_variables_disable_signup_without_link }}"}
+    - {'name': 'labelstudio_environment_variables_password', when: "{{ labelstudio_environment_variables_disable_signup_without_link }}"}
 
 - when: labelstudio_container_labels_traefik_enabled | bool
   block:

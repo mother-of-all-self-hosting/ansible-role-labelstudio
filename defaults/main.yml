@@ -147,6 +147,15 @@ labelstudio_environment_variables_minio_root_user: minio_admin_do_not_use_in_pro
 # Controls the MINIO_ROOT_PASSWORD environment variable
 labelstudio_environment_variables_minio_root_password: minio_admin_do_not_use_in_production
 
+# To disable the signup page unless someone uses the invitation link, set this to true
+labelstudio_environment_variables_disable_signup_without_link: false
+# If labelstudio_environment_variables_disable_signup_without_link is set,
+# you must set an original user with password
+# Token can also be added, use labelstudio_environment_variables_additional_variables
+# for further details see the original documentation at: https://labelstud.io/guide/signup
+labelstudio_environment_variables_username: ""
+labelstudio_environment_variables_password: ""
+
 # Additional environment variables.
 labelstudio_environment_variables_additional_variables: ""
 
