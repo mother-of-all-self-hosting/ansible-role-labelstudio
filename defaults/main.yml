@@ -127,15 +127,15 @@ labelstudio_postgres_backend_enabled: false
 labelstudio_environment_variables_django_db: default
 # Controls the SSRF_PROTECTION_ENABLED django env var
 labelstudio_environment_variables_ssrf_protection_enabled: true
-# Controls the POSTGRES_NAME environment variable
+# Controls the POSTGRE_NAME environment variable
 labelstudio_database_name: ""
-# Controls the POSTGRES_USER environment variable
+# Controls the POSTGRE_USER environment variable
 labelstudio_database_username: ""
-# Controls the POSTGRES_PASSWORD environment variable
+# Controls the POSTGRE_PASSWORD environment variable
 labelstudio_database_password: ""
-# Controls the POSTGRES_PORT environment variable
+# Controls the POSTGRE_PORT environment variable
 labelstudio_database_port: 5432
-# Controls the POSTGRES_HOST environment variable
+# Controls the POSTGRE_HOST environment variable
 labelstudio_database_hostname: ""
 
 # Controls if Minio is used as storage backend
