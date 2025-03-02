@@ -1,8 +1,6 @@
 galaxy_info:
-  author: etke.cc
-  company: etke.cc
+  author: horvathg.1988
   role_name: labelstudio
-  namespace: etkecc
   description: labelstudio
   platforms:
     - name: Debian
