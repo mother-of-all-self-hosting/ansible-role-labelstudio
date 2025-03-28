@@ -28,7 +28,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--env-file={{ labelstudio_base_path }}/env \
 			--label-file={{ labelstudio_base_path }}/labels \
 			--health-interval={{ labelstudio_container_health_interval }} \
-			--tmpfs=/tmp:rw,noexec,nosuid,size=100m \
+			--tmpfs=/tmp:rw,noexec,nosuid,size={{ labelstudio_container_tmpfs_size }} \
 			--mount type=bind,src={{ labelstudio_data_path }},dst=/label-studio/data \
 			{% for volume in labelstudio_container_additional_volumes %}
 			--mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options | default('') else '' }} \
