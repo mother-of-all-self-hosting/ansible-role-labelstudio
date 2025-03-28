@@ -117,6 +117,12 @@ labelstudio_container_health_interval: "{{ '5s' if labelstudio_container_labels_
 #     options: readonly
 labelstudio_container_additional_volumes: []
 
+# Temporary folder used when exporting.
+# Lablestudio collects all files in this folder before download,
+# therefore in some cases (exporting labels with images) larger
+# volume may be necessary.
+labelstudio_container_tmpfs_size: "100m"
+
 # A list of extra arguments to pass to the container
 labelstudio_container_extra_arguments: []
 
