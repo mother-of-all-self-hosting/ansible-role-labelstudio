@@ -191,6 +191,12 @@ labelstudio_systemd_required_systemd_services_list_default: ['docker.service']
 labelstudio_systemd_required_systemd_services_list_auto: []
 labelstudio_systemd_required_systemd_services_list_custom: []
 
+# List of systemd services that the Label Studio systemd service wants
+labelstudio_systemd_wanted_services_list: "{{ labelstudio_systemd_wanted_services_list_default + labelstudio_systemd_wanted_services_list_auto + labelstudio_systemd_wanted_services_list_custom }}"
+labelstudio_systemd_wanted_services_list_default: []
+labelstudio_systemd_wanted_services_list_auto: []
+labelstudio_systemd_wanted_services_list_custom: []
+
 # Controls if Postgre SQL is used as database backend (recommended)
 labelstudio_postgres_backend_enabled: false
 # Controls the DJANGO_DB environment variable
