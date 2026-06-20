@@ -1,4 +1,6 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Gergely Horváth
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -24,6 +26,25 @@
         state: absent
       with_items:
         - "{{ devture_systemd_docker_base_systemd_path }}/{{ labelstudio_identifier }}.service"
+
+    - name: Ensure Label Studio container network does not exist
+      when: labelstudio_container_network_deletion_enabled
+      block:
+        - name: Ensure Label Studio container network does not exist via community.docker.docker_network
+          when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+          community.docker.docker_network:
+            name: "{{ labelstudio_container_network }}"
+            state: absent
+          register: labelstudio_network_deletion_result
+
+        - name: Ensure Label Studio container network does not exist via ansible.builtin.command
+          when: devture_systemd_docker_base_container_network_creation_method == 'command'
+          ansible.builtin.command:
+            cmd: >-
+              {{ devture_systemd_docker_base_host_command_docker }} network rm
+              {{ labelstudio_container_network }}
+          register: labelstudio_network_deletion_result
+          changed_when: labelstudio_container_network in labelstudio_network_deletion_result.stdout
 
     - name: Ensure Label Studio path doesn't exist
       ansible.builtin.file:

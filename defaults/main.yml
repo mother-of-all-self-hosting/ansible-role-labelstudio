@@ -37,6 +37,9 @@ labelstudio_container_image_force_pull: "{{ labelstudio_container_image.endswith
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 labelstudio_container_network: "{{ labelstudio_identifier }}"
 
+# Control if the container network is deleted on uninstalling.
+labelstudio_container_network_deletion_enabled: true
+
 # Specifies how the container publishes its HTTP port
 #
 # Takes an "<ip>:<port>" value (e.g. "127.0.0.1:4533"), just a port number or an empty string to not expose.
