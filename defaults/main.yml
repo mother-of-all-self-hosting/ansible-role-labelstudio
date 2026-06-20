@@ -248,10 +248,10 @@ labelstudio_environment_variables_ssrf_protection_enabled: true
 labelstudio_minio_backend_enabled: false
 
 # Control the MINIO_ROOT_USER environment variable
-labelstudio_environment_variables_minio_root_user: minio_admin_do_not_use_in_production
+labelstudio_environment_variables_minio_root_user: ""
 
 # Control the MINIO_ROOT_PASSWORD environment variable
-labelstudio_environment_variables_minio_root_password: minio_admin_do_not_use_in_production
+labelstudio_environment_variables_minio_root_password: ""
 
 # To disable the signup page unless someone uses the invitation link, set this to true
 labelstudio_environment_variables_disable_signup_without_link: false
