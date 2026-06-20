@@ -1,6 +1,7 @@
 {#
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 SPDX-FileCopyrightText: 2024 Gergely Horváth
-SPDX-FileCopyrightText: 2026 Suguru Hirahara
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -24,10 +25,10 @@ traefik.http.middlewares.{{ labelstudio_identifier }}-slashless-redirect.redirec
 {% set middlewares = middlewares + [labelstudio_identifier + '-slashless-redirect'] %}
 {% endif %}
 
-{#
-	Intentionally not adding a stripPrefix middleware.
-	Label Studio seems to serve itself under the same prefix it sees in the ND_BASEURL environment variable.
-#}
+{% if labelstudio_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ labelstudio_identifier }}-strip-prefix.stripprefix.prefixes={{ labelstudio_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [labelstudio_identifier + '-strip-prefix'] %}
+{% endif %}
 
 {% if labelstudio_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
 {% for name, value in labelstudio_container_labels_traefik_additional_request_headers.items() %}
@@ -60,4 +61,6 @@ traefik.http.routers.{{ labelstudio_identifier }}.tls.certResolver={{ labelstudi
 traefik.http.services.{{ labelstudio_identifier }}.loadbalancer.server.port={{ labelstudio_container_http_port }}
 {% endif %}
 
-{{ labelstudio_container_labels_additional_labels }}
+{% for arg in labelstudio_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}
