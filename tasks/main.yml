@@ -1,24 +1,28 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Gergely Horváth
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
-- block:
-    - when: labelstudio_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - when: labelstudio_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+- name: Perform Label Studio installation tasks
+  when: labelstudio_enabled | bool
   tags:
     - setup-all
     - setup-labelstudio
     - install-all
     - install-labelstudio
+  block:
+    - name: Validate Label Studio configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Label Studio
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- block:
-    - when: not labelstudio_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+- name: Perform Label Studio uninstallation tasks
+  when: not labelstudio_enabled | bool
   tags:
     - setup-all
     - setup-labelstudio
+  block:
+    - name: Uninstall Label Studio
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
