@@ -11,6 +11,10 @@
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "labelstudio_http_header_content_permission_policy", "new": "labelstudio_http_header_permissions_policy" }
+    - { "old": "labelstudio_systemd_required_systemd_services_list", "new": "labelstudio_systemd_required_services_list" }
+    - { "old": "labelstudio_systemd_required_systemd_services_list_default", "new": "labelstudio_systemd_required_services_list_default" }
+    - { "old": "labelstudio_systemd_required_systemd_services_list_auto", "new": "labelstudio_systemd_required_services_list_auto" }
+    - { "old": "labelstudio_systemd_required_systemd_services_list_custom", "new": "labelstudio_systemd_required_services_list_custom" }
 
 - name: Fail if required Label Studio settings not defined
   ansible.builtin.fail:
