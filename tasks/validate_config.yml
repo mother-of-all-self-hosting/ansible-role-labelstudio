@@ -26,22 +26,22 @@
       You need to define a required configuration setting (`{{ item.name }}`).
   when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
-    - {'name': 'labelstudio_identifier', when: true}
-    - {'name': 'labelstudio_uid', when: true}
-    - {'name': 'labelstudio_gid', when: true}
-    - {'name': 'labelstudio_hostname', when: true}
-    - {'name': 'labelstudio_path_prefix', when: true}
-    - {'name': 'labelstudio_container_network', when: true}
-    - {'name': 'labelstudio_container_labels_traefik_compression_middleware_name', when: "{{ labelstudio_container_labels_traefik_compression_middleware_enabled }}"}
-    - {'name': 'labelstudio_database_name', when: "{{ labelstudio_postgres_backend_enabled }}"}
-    - {'name': 'labelstudio_database_username', when: "{{ labelstudio_postgres_backend_enabled }}"}
-    - {'name': 'labelstudio_database_password', when: "{{ labelstudio_postgres_backend_enabled }}"}
-    - {'name': 'labelstudio_database_port', when: "{{ labelstudio_postgres_backend_enabled }}"}
-    - {'name': 'labelstudio_database_hostname', when: "{{ labelstudio_postgres_backend_enabled }}"}
-    - {'name': 'labelstudio_environment_variables_minio_root_user', when: "{{ labelstudio_minio_backend_enabled }}"}
-    - {'name': 'labelstudio_environment_variables_minio_root_password', when: "{{ labelstudio_minio_backend_enabled }}"}
-    - {'name': 'labelstudio_environment_variables_username', when: "{{ labelstudio_environment_variables_disable_signup_without_link }}"}
-    - {'name': 'labelstudio_environment_variables_password', when: "{{ labelstudio_environment_variables_disable_signup_without_link }}"}
+    - { "name": "labelstudio_identifier", when: true }
+    - { "name": "labelstudio_uid", when: true }
+    - { "name": "labelstudio_gid", when: true }
+    - { "name": "labelstudio_hostname", when: true }
+    - { "name": "labelstudio_path_prefix", when: true }
+    - { "name": "labelstudio_container_network", when: true }
+    - { "name": "labelstudio_container_labels_traefik_compression_middleware_name", when: "{{ labelstudio_container_labels_traefik_compression_middleware_enabled }}" }
+    - { "name": "labelstudio_database_name", when: "{{ labelstudio_postgres_backend_enabled }}" }
+    - { "name": "labelstudio_database_username", when: "{{ labelstudio_postgres_backend_enabled }}" }
+    - { "name": "labelstudio_database_password", when: "{{ labelstudio_postgres_backend_enabled }}" }
+    - { "name": "labelstudio_database_port", when: "{{ labelstudio_postgres_backend_enabled }}" }
+    - { "name": "labelstudio_database_hostname", when: "{{ labelstudio_postgres_backend_enabled }}" }
+    - { "name": "labelstudio_environment_variables_minio_root_user", when: "{{ labelstudio_minio_backend_enabled }}" }
+    - { "name": "labelstudio_environment_variables_minio_root_password", when: "{{ labelstudio_minio_backend_enabled }}" }
+    - { "name": "labelstudio_environment_variables_username", when: "{{ labelstudio_environment_variables_disable_signup_without_link }}" }
+    - { "name": "labelstudio_environment_variables_password", when: "{{ labelstudio_environment_variables_disable_signup_without_link }}" }
 
 - name: Run if Traefik is enabled
   when: labelstudio_container_labels_traefik_enabled | bool

@@ -19,14 +19,14 @@ labelstudio_data_path: "{{ labelstudio_base_path }}/data"
 # renovate: datasource=docker depName=heartexlabs/label-studio versioning=semver
 labelstudio_version: 1.23.0
 
-labelstudio_uid: ''
-labelstudio_gid: ''
+labelstudio_uid: ""
+labelstudio_gid: ""
 
 # The scheme used for serving Label Studio.
 labelstudio_scheme: https
 
 # The hostname at which Label Studio is served.
-labelstudio_hostname: ''
+labelstudio_hostname: ""
 
 # The path at which Label Studio is served.
 # This value must either be `/` or not end with a slash (e.g. `/labelstudio`).
@@ -47,7 +47,7 @@ labelstudio_container_network_deletion_enabled: true
 # Specifies how the container publishes its HTTP port
 #
 # Takes an "<ip>:<port>" value (e.g. "127.0.0.1:4533"), just a port number or an empty string to not expose.
-labelstudio_container_http_host_bind_port: ''
+labelstudio_container_http_host_bind_port: ""
 
 # The port number in the container
 labelstudio_container_http_port: 8080
