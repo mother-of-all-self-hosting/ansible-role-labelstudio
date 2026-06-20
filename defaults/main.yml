@@ -17,6 +17,9 @@ labelstudio_version: 1.23.0
 labelstudio_uid: ''
 labelstudio_gid: ''
 
+# The scheme used for serving Label Studio.
+labelstudio_scheme: https
+
 # The hostname at which Label Studio is served.
 labelstudio_hostname: ''
 
