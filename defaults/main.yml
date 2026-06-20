@@ -223,4 +223,3 @@ labelstudio_systemd_required_services_list: "{{ labelstudio_systemd_required_sys
 labelstudio_systemd_required_systemd_services_list_default: ['docker.service']
 labelstudio_systemd_required_systemd_services_list_auto: []
 labelstudio_systemd_required_systemd_services_list_custom: []
-
