@@ -262,6 +262,8 @@ labelstudio_environment_variables_disable_signup_without_link: false
 labelstudio_environment_variables_username: ""
 labelstudio_environment_variables_password: ""
 
+labelstudio_environment_variables_collect_analytics: false
+
 # Additional environment variables.
 labelstudio_environment_variables_additional_variables: ""
 
