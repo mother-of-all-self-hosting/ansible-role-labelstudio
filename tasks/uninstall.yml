@@ -4,28 +4,28 @@
 
 ---
 
-- name: Check existence of labelstudio systemd service
+- name: Check existence of Label Studio systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ labelstudio_identifier }}.service"
   register: labelstudio_service_stat
 
 - when: labelstudio_service_stat.stat.exists | bool
   block:
-    - name: Ensure labelstudio systemd service is stopped
+    - name: Ensure Label Studio systemd service is stopped
       ansible.builtin.service:
         name: "{{ labelstudio_identifier }}"
         state: stopped
         enabled: false
         daemon_reload: true
 
-    - name: Ensure labelstudio systemd service does not exist
+    - name: Ensure Label Studio systemd service does not exist
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
       with_items:
         - "{{ devture_systemd_docker_base_systemd_path }}/{{ labelstudio_identifier }}.service"
 
-    - name: Ensure labelstudio path doesn't exist
+    - name: Ensure Label Studio path doesn't exist
       ansible.builtin.file:
         path: "{{ labelstudio_base_path }}"
         state: absent

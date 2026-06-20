@@ -25,7 +25,7 @@ traefik.http.middlewares.{{ labelstudio_identifier }}-slashless-redirect.redirec
 
 {#
 	Intentionally not adding a stripPrefix middleware.
-	labelstudio seems to serve itself under the same prefix it sees in the ND_BASEURL environment variable.
+	Label Studio seems to serve itself under the same prefix it sees in the ND_BASEURL environment variable.
 #}
 
 {% if labelstudio_container_labels_traefik_additional_request_headers.keys() | length > 0 %}

@@ -4,7 +4,7 @@
 
 ---
 
-- name: Ensure labelstudio paths exist
+- name: Ensure Label Studio paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -15,7 +15,7 @@
     - "{{ labelstudio_base_path }}"
     - "{{ labelstudio_data_path }}"
 
-- name: Ensure labelstudio support files installed
+- name: Ensure Label Studio support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ labelstudio_base_path }}/{{ item }}"
@@ -26,7 +26,7 @@
     - env
     - labels
 
-- name: Ensure labelstudio container image is pulled
+- name: Ensure Label Studio container image is pulled
   community.docker.docker_image:
     name: "{{ labelstudio_container_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
@@ -37,12 +37,12 @@
   delay: "{{ devture_playbook_help_container_retries_delay }}"
   until: result is not failed
 
-- name: Ensure labelstudio container network is created
+- name: Ensure Label Studio container network is created
   community.general.docker_network:
     name: "{{ labelstudio_container_network }}"
     driver: bridge
 
-- name: Ensure labelstudio systemd service is present
+- name: Ensure Label Studio systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/labelstudio.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ labelstudio_identifier }}.service"

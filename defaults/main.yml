@@ -16,10 +16,10 @@ labelstudio_version: latest
 labelstudio_uid: ''
 labelstudio_gid: ''
 
-# The hostname at which labelstudio is served.
+# The hostname at which Label Studio is served.
 labelstudio_hostname: ''
 
-# The path at which labelstudio is served.
+# The path at which Label Studio is served.
 # This value must either be `/` or not end with a slash (e.g. `/labelstudio`).
 labelstudio_path_prefix: /
 

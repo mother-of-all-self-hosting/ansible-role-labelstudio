@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 #jinja2: lstrip_blocks: "True"
 [Unit]
-Description=LabelStudio ({{ labelstudio_identifier }})
+Description=Label Studio ({{ labelstudio_identifier }})
 {% for service in labelstudio_systemd_required_services_list %}
 Requires={{ service }}
 After={{ service }}
@@ -19,7 +19,7 @@ Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ labelstudio_identifier }} 2>/dev/null || true'
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ labelstudio_identifier }} 2>/dev/null || true'
 
-{# We mount a tmpfs at /tmp to allow labelstudio migrations to run. #}
+{# We mount a tmpfs at /tmp to allow Label Studio migrations to run. #}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--rm \
 			--name={{ labelstudio_identifier }} \
