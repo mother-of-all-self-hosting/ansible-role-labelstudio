@@ -37,7 +37,6 @@ labelstudio_container_image_tag: "{{ labelstudio_version }}"
 labelstudio_container_image_registry_prefix: "{{ labelstudio_container_image_registry_prefix_upstream }}"
 labelstudio_container_image_registry_prefix_upstream: "{{ labelstudio_container_image_registry_prefix_upstream_default }}"
 labelstudio_container_image_registry_prefix_upstream_default: docker.io/
-labelstudio_container_image_force_pull: "{{ labelstudio_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 labelstudio_container_network: "{{ labelstudio_identifier }}"
