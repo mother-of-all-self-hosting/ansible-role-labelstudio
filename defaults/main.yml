@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-# Project source code URL: https://github.com/labelstudio/labelstudio
+# Project source code URL: https://github.com/HumanSignal/label-studio
 
 labelstudio_enabled: true
 
@@ -11,7 +11,8 @@ labelstudio_identifier: labelstudio
 labelstudio_base_path: "/{{ labelstudio_identifier }}"
 labelstudio_data_path: "{{ labelstudio_base_path }}/data"
 
-labelstudio_version: latest
+# renovate: datasource=docker depName=heartexlabs/label-studio versioning=semver
+labelstudio_version: 1.23.0
 
 labelstudio_uid: ''
 labelstudio_gid: ''
