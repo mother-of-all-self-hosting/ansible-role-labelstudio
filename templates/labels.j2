@@ -1,5 +1,6 @@
 {#
 SPDX-FileCopyrightText: 2024 Gergely Horváth
+SPDX-FileCopyrightText: 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
@@ -56,7 +57,7 @@ traefik.http.routers.{{ labelstudio_identifier }}.tls={{ labelstudio_container_l
 traefik.http.routers.{{ labelstudio_identifier }}.tls.certResolver={{ labelstudio_container_labels_traefik_tls_certResolver }}
 {% endif %}
 
-traefik.http.services.{{ labelstudio_identifier }}.loadbalancer.server.port=8080
+traefik.http.services.{{ labelstudio_identifier }}.loadbalancer.server.port={{ labelstudio_container_http_port }}
 {% endif %}
 
 {{ labelstudio_container_labels_additional_labels }}

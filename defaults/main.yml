@@ -42,6 +42,9 @@ labelstudio_container_network: "{{ labelstudio_identifier }}"
 # Takes an "<ip>:<port>" value (e.g. "127.0.0.1:4533"), just a port number or an empty string to not expose.
 labelstudio_container_http_bind_port: ''
 
+# The port number in the container
+labelstudio_container_http_port: 8080
+
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
