@@ -3,17 +3,18 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 # Project source code URL: https://github.com/labelstudio/labelstudio
 
 labelstudio_enabled: false
 
 labelstudio_identifier: labelstudio
+labelstudio_base_path: "/{{ labelstudio_identifier }}"
+labelstudio_data_path: "{{ labelstudio_base_path }}/data"
+
+labelstudio_version: latest
 
 labelstudio_uid: ''
 labelstudio_gid: ''
-
-labelstudio_version: latest
 
 # The hostname at which labelstudio is served.
 labelstudio_hostname: ''
@@ -21,9 +22,6 @@ labelstudio_hostname: ''
 # The path at which labelstudio is served.
 # This value must either be `/` or not end with a slash (e.g. `/labelstudio`).
 labelstudio_path_prefix: /
-
-labelstudio_base_path: "/{{ labelstudio_identifier }}"
-labelstudio_data_path: "{{ labelstudio_base_path }}/data"
 
 labelstudio_container_image: "{{ labelstudio_container_image_registry_prefix }}heartexlabs/label-studio:{{ labelstudio_container_image_tag }}"
 labelstudio_container_image_registry_prefix: docker.io/
@@ -33,6 +31,11 @@ labelstudio_container_image_force_pull: "{{ labelstudio_container_image.endswith
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 labelstudio_container_network: "{{ labelstudio_identifier }}"
 
+# Specifies how the container publishes its HTTP port
+#
+# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:4533"), just a port number or an empty string to not expose.
+labelstudio_container_http_bind_port: ''
+
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 # Use this to expose this container to another reverse proxy, which runs in a different container network.
@@ -40,10 +43,20 @@ labelstudio_container_additional_networks: "{{ labelstudio_container_additional_
 labelstudio_container_additional_networks_auto: []
 labelstudio_container_additional_networks_custom: []
 
-# Specifies how the container publishes its HTTP port
+# A list of additional "volumes" to mount in the container.
 #
-# Takes an "<ip>:<port>" value (e.g. "127.0.0.1:4533"), just a port number or an empty string to not expose.
-labelstudio_container_http_bind_port: ''
+# See the `--mount` documentation for the `docker run` command.
+#
+# Example:
+# labelstudio_container_additional_volumes:
+#   - type: bind
+#     src: /path/on/the/host
+#     dst: /data
+#   - type: bind
+#     src: /another-path/on/the/host
+#     dst: /read-only
+#     options: readonly
+labelstudio_container_additional_volumes: []
 
 # labelstudio_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
@@ -106,21 +119,6 @@ labelstudio_container_labels_additional_labels: ''
 # For non-Traefik setups, we use the default healthcheck interval (30s) to decrease overhead.
 labelstudio_container_health_interval: "{{ '5s' if labelstudio_container_labels_traefik_enabled else '30s' }}"
 
-# A list of additional "volumes" to mount in the container.
-#
-# See the `--mount` documentation for the `docker run` command.
-#
-# Example:
-# labelstudio_container_additional_volumes:
-#   - type: bind
-#     src: /path/on/the/host
-#     dst: /data
-#   - type: bind
-#     src: /another-path/on/the/host
-#     dst: /read-only
-#     options: readonly
-labelstudio_container_additional_volumes: []
-
 # Temporary folder used when exporting.
 # Lablestudio collects all files in this folder before download,
 # therefore in some cases (exporting labels with images) larger
@@ -129,43 +127,6 @@ labelstudio_container_tmpfs_size: "100m"
 
 # A list of extra arguments to pass to the container
 labelstudio_container_extra_arguments: []
-
-
-# Controls if Postgre SQL is used as database backend (recommended)
-labelstudio_postgres_backend_enabled: false
-# Controls the DJANGO_DB environment variable
-labelstudio_environment_variables_django_db: default
-# Controls the SSRF_PROTECTION_ENABLED django env var
-labelstudio_environment_variables_ssrf_protection_enabled: true
-# Controls the POSTGRE_NAME environment variable
-labelstudio_database_name: "labelstudio"
-# Controls the POSTGRE_USER environment variable
-labelstudio_database_username: ""
-# Controls the POSTGRE_PASSWORD environment variable
-labelstudio_database_password: ""
-# Controls the POSTGRE_PORT environment variable
-labelstudio_database_port: 5432
-# Controls the POSTGRE_HOST environment variable
-labelstudio_database_hostname: ""
-
-# Controls if Minio is used as storage backend
-labelstudio_minio_backend_enabled: false
-# Controls the MINIO_ROOT_USER environment variable
-labelstudio_environment_variables_minio_root_user: minio_admin_do_not_use_in_production
-# Controls the MINIO_ROOT_PASSWORD environment variable
-labelstudio_environment_variables_minio_root_password: minio_admin_do_not_use_in_production
-
-# To disable the signup page unless someone uses the invitation link, set this to true
-labelstudio_environment_variables_disable_signup_without_link: false
-# If labelstudio_environment_variables_disable_signup_without_link is set,
-# you must set an original user with password
-# Token can also be added, use labelstudio_environment_variables_additional_variables
-# for further details see the original documentation at: https://labelstud.io/guide/signup
-labelstudio_environment_variables_username: ""
-labelstudio_environment_variables_password: ""
-
-# Additional environment variables.
-labelstudio_environment_variables_additional_variables: ""
 
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
@@ -223,3 +184,39 @@ labelstudio_systemd_required_services_list: "{{ labelstudio_systemd_required_sys
 labelstudio_systemd_required_systemd_services_list_default: ['docker.service']
 labelstudio_systemd_required_systemd_services_list_auto: []
 labelstudio_systemd_required_systemd_services_list_custom: []
+
+# Controls if Postgre SQL is used as database backend (recommended)
+labelstudio_postgres_backend_enabled: false
+# Controls the DJANGO_DB environment variable
+labelstudio_environment_variables_django_db: default
+# Controls the SSRF_PROTECTION_ENABLED django env var
+labelstudio_environment_variables_ssrf_protection_enabled: true
+# Controls the POSTGRE_NAME environment variable
+labelstudio_database_name: "labelstudio"
+# Controls the POSTGRE_USER environment variable
+labelstudio_database_username: ""
+# Controls the POSTGRE_PASSWORD environment variable
+labelstudio_database_password: ""
+# Controls the POSTGRE_PORT environment variable
+labelstudio_database_port: 5432
+# Controls the POSTGRE_HOST environment variable
+labelstudio_database_hostname: ""
+
+# Controls if Minio is used as storage backend
+labelstudio_minio_backend_enabled: false
+# Controls the MINIO_ROOT_USER environment variable
+labelstudio_environment_variables_minio_root_user: minio_admin_do_not_use_in_production
+# Controls the MINIO_ROOT_PASSWORD environment variable
+labelstudio_environment_variables_minio_root_password: minio_admin_do_not_use_in_production
+
+# To disable the signup page unless someone uses the invitation link, set this to true
+labelstudio_environment_variables_disable_signup_without_link: false
+# If labelstudio_environment_variables_disable_signup_without_link is set,
+# you must set an original user with password
+# Token can also be added, use labelstudio_environment_variables_additional_variables
+# for further details see the original documentation at: https://labelstud.io/guide/signup
+labelstudio_environment_variables_username: ""
+labelstudio_environment_variables_password: ""
+
+# Additional environment variables.
+labelstudio_environment_variables_additional_variables: ""
