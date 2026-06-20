@@ -5,7 +5,7 @@
 ---
 # Project source code URL: https://github.com/labelstudio/labelstudio
 
-labelstudio_enabled: false
+labelstudio_enabled: true
 
 labelstudio_identifier: labelstudio
 labelstudio_base_path: "/{{ labelstudio_identifier }}"
