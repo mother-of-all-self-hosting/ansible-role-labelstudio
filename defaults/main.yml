@@ -95,7 +95,7 @@ labelstudio_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'X-Frame-Options': labelstudio_http_header_frame_options} if labelstudio_http_header_frame_options else {})
     | combine ({'X-Content-Type-Options': labelstudio_http_header_content_type_options} if labelstudio_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': labelstudio_http_header_content_security_policy} if labelstudio_http_header_content_security_policy else {})
-    | combine ({'Permission-Policy': labelstudio_http_header_content_permission_policy} if labelstudio_http_header_content_permission_policy else {})
+    | combine ({'Permissions-Policy': labelstudio_http_header_permissions_policy} if labelstudio_http_header_permissions_policy else {})
     | combine ({'Strict-Transport-Security': labelstudio_http_header_strict_transport_security} if labelstudio_http_header_strict_transport_security and labelstudio_container_labels_traefik_tls else {})
   }}
 labelstudio_container_labels_traefik_additional_response_headers_custom: {}
@@ -149,9 +149,9 @@ labelstudio_http_header_content_type_options: nosniff
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 labelstudio_http_header_content_security_policy: frame-ancestors 'self'
 
-# Specifies the value of the `Permission-Policy` header.
-# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permission-Policy
-labelstudio_http_header_content_permission_policy: "{{ 'interest-cohort=()' if labelstudio_floc_optout_enabled else '' }}"
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+labelstudio_http_header_permissions_policy: "{{ 'interest-cohort=()' if labelstudio_floc_optout_enabled else '' }}"
 
 # Specifies the value of the `Strict-Transport-Security` header.
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
@@ -165,7 +165,7 @@ labelstudio_http_header_strict_transport_security: "max-age=31536000; includeSub
 # - https://amifloced.org/
 #
 # Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
-# See: `labelstudio_content_permission_policy`
+# See: `labelstudio_http_header_permissions_policy`
 labelstudio_floc_optout_enabled: true
 
 # Controls if HSTS preloading is enabled
