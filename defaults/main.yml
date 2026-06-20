@@ -47,7 +47,7 @@ labelstudio_container_network_deletion_enabled: true
 # Specifies how the container publishes its HTTP port
 #
 # Takes an "<ip>:<port>" value (e.g. "127.0.0.1:4533"), just a port number or an empty string to not expose.
-labelstudio_container_http_bind_port: ''
+labelstudio_container_http_host_bind_port: ''
 
 # The port number in the container
 labelstudio_container_http_port: 8080

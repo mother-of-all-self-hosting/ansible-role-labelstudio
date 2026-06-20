@@ -32,8 +32,8 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --cap-drop=ALL \
       --read-only \
       --network={{ labelstudio_container_network }} \
-      {% if labelstudio_container_http_bind_port %}
-      -p {{ labelstudio_container_http_bind_port }}:{{ labelstudio_container_http_port }} \
+      {% if labelstudio_container_http_host_bind_port %}
+      -p {{ labelstudio_container_http_host_bind_port }}:{{ labelstudio_container_http_port }} \
       {% endif %}
       --env-file={{ labelstudio_base_path }}/env \
       --label-file={{ labelstudio_base_path }}/labels \
