@@ -5,13 +5,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of Label Studio systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ labelstudio_identifier }}.service"
   register: labelstudio_service_stat
 
-- when: labelstudio_service_stat.stat.exists | bool
+- name: Uninstall Label Studio systemd services and files
+  when: labelstudio_service_stat.stat.exists | bool
   block:
     - name: Ensure Label Studio systemd service is stopped
       ansible.builtin.service:
@@ -22,10 +22,30 @@
 
     - name: Ensure Label Studio systemd service does not exist
       ansible.builtin.file:
-        path: "{{ item }}"
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ labelstudio_identifier }}.service"
+        state: absent
+
+    - name: Ensure Label Studio support files do not exist
+      ansible.builtin.file:
+        path: "{{ labelstudio_base_path }}/{{ item }}"
         state: absent
       with_items:
-        - "{{ devture_systemd_docker_base_systemd_path }}/{{ labelstudio_identifier }}.service"
+        - env
+        - labels
+
+    - name: Ensure Label Studio local data path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ labelstudio_data_path }}"
+      register: labelstudio_data_path_deletion_result
+      changed_when: labelstudio_data_path_deletion_result.rc == 0
+      failed_when: false
+
+    - name: Ensure Label Studio base path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ labelstudio_base_path }}"
+      register: labelstudio_base_path_deletion_result
+      changed_when: labelstudio_base_path_deletion_result.rc == 0
+      failed_when: false
 
     - name: Ensure Label Studio container network does not exist
       when: labelstudio_container_network_deletion_enabled
@@ -46,7 +66,20 @@
           register: labelstudio_network_deletion_result
           changed_when: labelstudio_container_network in labelstudio_network_deletion_result.stdout
 
-    - name: Ensure Label Studio path doesn't exist
-      ansible.builtin.file:
-        path: "{{ labelstudio_base_path }}"
-        state: absent
+- name: Check existence of Label Studio local data path
+  ansible.builtin.stat:
+    path: "{{ labelstudio_data_path }}"
+  register: labelstudio_data_path_stat
+
+# We just want to notify the user. Deleting data is too destructive.
+- name: Inject the message about the remaining Label Studio local data path
+  when: labelstudio_data_path_stat.stat.exists | bool
+  ansible.builtin.set_fact:
+    devture_playbook_runtime_messages_list: |
+      {{
+        devture_playbook_runtime_messages_list | default([])
+        +
+        [
+          "Note: As the local Label Studio instance has been removed, some old data remains in `" + labelstudio_data_path + "`. Feel free to delete it."
+        ]
+      }}
