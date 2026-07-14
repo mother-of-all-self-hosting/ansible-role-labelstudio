@@ -27,13 +27,53 @@ provisioner:
   inventory:
     group_vars:
       all:
+        # Variables for Label Studio
         labelstudio_uid: 1000
         labelstudio_gid: 1000
         labelstudio_hostname: labelstudio
         labelstudio_container_labels_traefik_enabled: false
         labelstudio_container_http_host_bind_port: 8080
+
+        # Variables required for Label Studio to connect to the Postgres database
+        labelstudio_postgres_backend_enabled: true
+        labelstudio_database_hostname: "{{ postgres_connection_hostname }}"
+        labelstudio_database_port: "{{ postgres_connection_port }}"
+        labelstudio_database_username: my_database_username
+        labelstudio_database_password: my_database_password
+        labelstudio_database_name: labelstudio
+        labelstudio_systemd_required_services_list_auto: |
+          {{
+            (['postgres.service'])
+          }}
+
+        # Variables for Postgres
+        postgres_uid: 1000
+        postgres_gid: 1000
+        postgres_connection_password: postgres_password
+        postgres_container_network: "{{ labelstudio_container_network }}"
+        postgres_managed_databases: |
+          {{
+            [{
+              'name': labelstudio_database_name,
+              'username': labelstudio_database_username,
+              'password': labelstudio_database_password,
+            }]
+          }}
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
+scenario:
+  # See: https://docs.ansible.com/projects/molecule/configuration/?h=test_sequence#scenario
+  test_sequence:
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    # Disable idempotence test for now due to ansible-role-postgres
+    # - idempotence
+    - verify
+    - cleanup
+    - destroy
 verifier:
   name: ansible
