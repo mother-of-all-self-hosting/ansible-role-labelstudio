@@ -1,0 +1,47 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Label Studio systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for Label Studio service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: labelstudio.service
+      register: labelstudio_service
+      until: labelstudio_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Label Studio service is active
+      ansible.builtin.assert:
+        that: labelstudio_service.status.ActiveState == 'active'
+        fail_msg: "labelstudio.service not active ({{ labelstudio_service.status.ActiveState }})"
+        success_msg: "labelstudio.service is active"
+
+    - name: Wait for Label Studio HTTP endpoint to respond (up to 10m)
+      ansible.builtin.uri:
+        url: "http://localhost:8080/"
+        method: GET
+        status_code: [200, 302]
+        follow_redirects: none
+      register: labelstudio_endpoint
+      until: labelstudio_endpoint.status in [200, 302]
+      retries: 120
+      delay: 5
+
+    - name: Assert Label Studio HTTP endpoint responds
+      ansible.builtin.assert:
+        that: labelstudio_endpoint.status in [200, 302]
+        fail_msg: "Label Studio did not respond as expected ({{ labelstudio_endpoint.status | default('no response') }})"
+        success_msg: "Label Studio responded with {{ labelstudio_endpoint.status }}"
+
+    - name: Show Label Studio systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "Label Studio systemd: {{ labelstudio_service.status.ActiveState }}"
+          - "Label Studio HTTP: {{ labelstudio_endpoint.status }}"
