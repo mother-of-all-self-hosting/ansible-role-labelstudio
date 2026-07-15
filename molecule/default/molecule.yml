@@ -65,6 +65,8 @@ provisioner:
 scenario:
   # See: https://docs.ansible.com/projects/molecule/configuration/?h=test_sequence#scenario
   test_sequence:
+    - dependency
+    - cleanup
     - destroy
     - syntax
     - create
@@ -72,6 +74,7 @@ scenario:
     - converge
     # Disable idempotence test for now due to ansible-role-postgres
     # - idempotence
+    - side_effect
     - verify
     - cleanup
     - destroy
