@@ -47,11 +47,11 @@ Currently these testing scenarios are available:
 
 ### `default`
 
-Tests a standard Readeck installation.
+Tests a standard Label Studio installation.
 
 ### `postgres`
 
-Tests a standard Readeck installation with the Postgres database.
+Tests a standard Label Studio installation with the Postgres database.
 
 ## Running
 
