@@ -33,7 +33,8 @@ provisioner:
         # Variables for Label Studio
         labelstudio_uid: 1000
         labelstudio_gid: 1000
-        labelstudio_hostname: labelstudio
+        labelstudio_scheme: http
+        labelstudio_hostname: localhost
         labelstudio_container_labels_traefik_enabled: false
         labelstudio_container_http_host_bind_port: 8080
 
