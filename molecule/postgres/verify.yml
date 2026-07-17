@@ -23,6 +23,12 @@
         fail_msg: "labelstudio.service not active ({{ labelstudio_service.status.ActiveState }})"
         success_msg: "labelstudio.service is active"
 
+    - name: Retrieve Label Studio service log for debugging
+      when: labelstudio_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu labelstudio.service
+      changed_when: false
+
     - name: Wait for Label Studio HTTP endpoint to respond (up to 10m)
       ansible.builtin.uri:
         url: "http://localhost:8080/"

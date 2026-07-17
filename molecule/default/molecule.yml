@@ -27,6 +27,9 @@ provisioner:
   inventory:
     group_vars:
       all:
+        # Helper variables
+        labelstudio_debug_service_enabled: false
+
         # Variables for Label Studio
         labelstudio_uid: 1000
         labelstudio_gid: 1000
