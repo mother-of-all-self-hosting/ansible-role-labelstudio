@@ -37,9 +37,9 @@ provisioner:
         labelstudio_hostname: localhost
         labelstudio_container_labels_traefik_enabled: false
         labelstudio_container_http_host_bind_port: 8080
+        labelstudio_database_type: postgres
 
         # Variables required for Label Studio to connect to the Postgres database
-        labelstudio_postgres_backend_enabled: true
         labelstudio_database_hostname: "{{ postgres_connection_hostname }}"
         labelstudio_database_port: "{{ postgres_connection_port }}"
         labelstudio_database_username: my_database_username

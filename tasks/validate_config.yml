@@ -12,6 +12,7 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
+    - { "old": "labelstudio_postgres_backend_enabled", "new": "labelstudio_database_type" }
     - { "old": "labelstudio_container_http_bind_port", "new": "labelstudio_container_http_host_bind_port" }
     - { "old": "labelstudio_http_header_content_permission_policy", "new": "labelstudio_http_header_permissions_policy" }
     - { "old": "labelstudio_systemd_required_systemd_services_list", "new": "labelstudio_systemd_required_services_list" }
@@ -32,15 +33,25 @@
     - { "name": "labelstudio_hostname", when: true }
     - { "name": "labelstudio_path_prefix", when: true }
     - { "name": "labelstudio_container_network", when: true }
-    - { "name": "labelstudio_database_name", when: "{{ labelstudio_postgres_backend_enabled }}" }
-    - { "name": "labelstudio_database_username", when: "{{ labelstudio_postgres_backend_enabled }}" }
-    - { "name": "labelstudio_database_password", when: "{{ labelstudio_postgres_backend_enabled }}" }
-    - { "name": "labelstudio_database_port", when: "{{ labelstudio_postgres_backend_enabled }}" }
-    - { "name": "labelstudio_database_hostname", when: "{{ labelstudio_postgres_backend_enabled }}" }
     - { "name": "labelstudio_environment_variables_minio_root_user", when: "{{ labelstudio_minio_backend_enabled }}" }
     - { "name": "labelstudio_environment_variables_minio_root_password", when: "{{ labelstudio_minio_backend_enabled }}" }
     - { "name": "labelstudio_environment_variables_username", when: "{{ labelstudio_environment_variables_disable_signup_without_link }}" }
     - { "name": "labelstudio_environment_variables_password", when: "{{ labelstudio_environment_variables_disable_signup_without_link }}" }
+
+- name: Fail if Label Studio database type is invalid
+  ansible.builtin.fail:
+    msg: >-
+      labelstudio_database_type must be 'postgres' or 'sqlite'.
+  when: "labelstudio_database_type not in ['postgres', 'sqlite']"
+
+- name: Fail if required Label Studio + Postgres integration settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when `labelstudio_database_type` is `postgres`
+  when: "labelstudio_database_type == 'postgres' and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - labelstudio_database_hostname
+    - labelstudio_database_password
 
 - name: Run if Traefik is enabled
   when: labelstudio_container_labels_traefik_enabled | bool

@@ -232,15 +232,16 @@ labelstudio_container_cleanup_command: |
   echo "Failed to remove stale container {{ labelstudio_identifier }} after {{ labelstudio_container_cleanup_timeout_seconds }} attempts" >&2;
   exit 1
 
+# Specify a database driver to use
+# Valid values: postgres, sqlite
+labelstudio_database_type: ""
+
 # Specify database configuration
 labelstudio_database_hostname: ""
 labelstudio_database_port: 5432
-labelstudio_database_username: ""
+labelstudio_database_username: labelstudio
 labelstudio_database_password: ""
 labelstudio_database_name: labelstudio
-
-# Control if PostgreSQL is used as database backend (recommended)
-labelstudio_postgres_backend_enabled: false
 
 # Control the DJANGO_DB environment variable
 labelstudio_environment_variables_django_db: default
