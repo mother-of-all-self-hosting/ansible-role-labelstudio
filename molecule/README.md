@@ -47,11 +47,19 @@ Currently these testing scenarios are available:
 
 ### `default`
 
-Tests a standard Label Studio installation.
+Tests a standard Label Studio installation backed by SQLite.
 
 ### `postgres`
 
 Tests a standard Label Studio installation with the Postgres database.
+
+## What the scenarios assert
+
+Both scenarios share the checks in [`resources/tasks/verify_labelstudio.yml`](resources/tasks/verify_labelstudio.yml) and then part ways over where the data has to be found.
+
+The shared part does more than watch the unit turn `active`, which `Restart=always` would report for a crash-looping container anyway. It logs in as the administrator that only the role's rendered env file can have created, tries to sign up as a passer-by and is refused, creates a project over the API and reads it back, and asserts that the running process reports the version `labelstudio_version` pins. Two controls keep that from being self-congratulatory: the same image with none of the role's configuration, which hands the passer-by an account, and the same image pointed at a database that does not resolve, which dies before it ever serves a page.
+
+Each scenario then goes looking for the project and the administrator in the store it configured — the SQLite file in the role's data path, or the Postgres database — and the `postgres` scenario additionally asserts that no SQLite file was written.
 
 ## Running
 

@@ -31,6 +31,36 @@ provisioner:
         # Helper variables
         labelstudio_debug_service_enabled: false
 
+        # The container the role creates, named after `labelstudio_identifier`.
+        labelstudio_molecule_container: labelstudio
+
+        # The administrator that Label Studio creates at first start out of the
+        # env file the role renders, and that verify.yml logs in as. It exists
+        # nowhere in Label Studio's own defaults, so a successful login is proof
+        # that the rendered configuration reached the running process.
+        labelstudio_molecule_admin_email: molecule-admin@example.com
+        labelstudio_molecule_admin_password: molecule-admin-password
+
+        # The passer-by verify.yml tries to sign up as - on the role's instance,
+        # which must refuse, and on an unconfigured one, which does not.
+        labelstudio_molecule_intruder_email: molecule-intruder@example.com
+        labelstudio_molecule_intruder_password: molecule-intruder-password
+
+        # The project verify.yml round-trips through the API and then goes
+        # looking for in the database this scenario configured. The description
+        # differs per scenario, so a container left over from another one cannot
+        # pass for this scenario's.
+        labelstudio_molecule_project_title: molecule-probe-project
+        labelstudio_molecule_project_description: molecule-round-trip-marker-sqlite
+
+        # Where this scenario's SQLite database is expected to land: inside the
+        # directory `labelstudio_data_path` names, which the role bind-mounts.
+        labelstudio_molecule_sqlite_path: /labelstudio/data/label_studio.sqlite3
+
+        # The host port that verify.yml publishes its unconfigured control
+        # instance on, alongside the role's own instance.
+        labelstudio_molecule_stock_port: 8081
+
         # Variables for Label Studio
         labelstudio_uid: 1000
         labelstudio_gid: 1000
@@ -38,7 +68,20 @@ provisioner:
         labelstudio_hostname: localhost
         labelstudio_container_labels_traefik_enabled: false
         labelstudio_container_http_host_bind_port: 8080
+
+        # Deliberately not Label Studio's own default of 8080. The published
+        # port maps the host's 8080 onto this one, so nothing in this scenario
+        # can answer unless `labelstudio_container_http_port` reaches the
+        # process as `PORT` rather than merely reaching the port mapping.
+        labelstudio_container_http_port: 8083
+
         labelstudio_database_type: sqlite
+
+        # Closes the open registration form that an unconfigured Label Studio
+        # serves, and names the account that owns the instance instead.
+        labelstudio_environment_variables_disable_signup_without_link: true
+        labelstudio_environment_variables_username: "{{ labelstudio_molecule_admin_email }}"
+        labelstudio_environment_variables_password: "{{ labelstudio_molecule_admin_password }}"
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles

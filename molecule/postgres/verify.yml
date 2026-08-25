@@ -1,53 +1,124 @@
-# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Verify Label Studio systemd service
+- name: Verify Label Studio
   hosts: all
   become: true
   gather_facts: false
+
+  vars:
+    labelstudio_verify_url: "http://127.0.0.1:{{ labelstudio_container_http_host_bind_port }}"
+    labelstudio_verify_stock_url: "http://127.0.0.1:{{ labelstudio_molecule_stock_port }}"
+
+    # The names carry both the role and the scenario, like the platform does, so
+    # a leftover container can never be mistaken for another scenario's.
+    labelstudio_verify_stock_container: "{{ inventory_hostname }}-stock-control"
+    labelstudio_verify_nodb_container: "{{ inventory_hostname }}-nodb-control"
+
+    # The query goes in as the role's own database user rather than as the
+    # Postgres superuser, so the credentials `labelstudio_database_username` and
+    # `_password` name are under test here too.
+    labelstudio_verify_psql:
+      - docker
+      - exec
+      - "--env=PGPASSWORD={{ labelstudio_database_password }}"
+      - "{{ postgres_identifier | default('postgres') }}"
+      - psql
+      - "--username={{ labelstudio_database_username }}"
+      - "--dbname={{ labelstudio_database_name }}"
+      - --tuples-only
+      - --no-align
+
+    labelstudio_verify_project_sql: "SELECT title || '|' || description FROM project ORDER BY id"
+    labelstudio_verify_user_sql: "SELECT email FROM htx_user ORDER BY id"
+
   tasks:
-    - name: Wait for Label Studio service to become active (up to 180s)
-      ansible.builtin.systemd:
-        name: labelstudio.service
-      register: labelstudio_service
-      until: labelstudio_service.status.ActiveState == 'active'
-      retries: 36
-      delay: 5
+    - name: Run the checks shared by all Label Studio scenarios
+      ansible.builtin.include_tasks:
+        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/resources/tasks/verify_labelstudio.yml"
 
-    - name: Assert Label Studio service is active
-      ansible.builtin.assert:
-        that: labelstudio_service.status.ActiveState == 'active'
-        fail_msg: "labelstudio.service not active ({{ labelstudio_service.status.ActiveState }})"
-        success_msg: "labelstudio.service is active"
-
-    - name: Retrieve Label Studio service log for debugging
-      when: labelstudio_debug_service_enabled | bool
+    # Pointing `labelstudio_database_type` at `postgres` is only worth testing if
+    # it actually moves the data. Asking Postgres itself for the project that was
+    # created over the API is what settles that: a `DJANGO_DB=default` in the env
+    # file would look just as convincing while Label Studio quietly kept its own
+    # SQLite file.
+    #
+    # `failed_when: false` leaves the verdict to the assertion below, so that a
+    # Label Studio which never created a schema here reports as the wrong rows
+    # rather than as a psql invocation that happened to exit non-zero.
+    - name: Read the projects Label Studio stored, out of the Postgres database
       ansible.builtin.command:
-        cmd: journalctl -xeu labelstudio.service
+        argv: "{{ labelstudio_verify_psql + ['--command=' ~ labelstudio_verify_project_sql] }}"
+      register: labelstudio_postgres_projects
       changed_when: false
+      failed_when: false
 
-    - name: Wait for Label Studio HTTP endpoint to respond (up to 10m)
-      ansible.builtin.uri:
-        url: "http://localhost:8080/"
-        method: GET
-        status_code: [200, 302]
-        follow_redirects: none
-      register: labelstudio_endpoint
-      until: labelstudio_endpoint.status in [200, 302]
-      retries: 120
-      delay: 5
-
-    - name: Assert Label Studio HTTP endpoint responds
+    - name: Assert that the Postgres database holds the project created over the API
       ansible.builtin.assert:
-        that: labelstudio_endpoint.status in [200, 302]
-        fail_msg: "Label Studio did not respond as expected ({{ labelstudio_endpoint.status | default('no response') }})"
-        success_msg: "Label Studio responded with {{ labelstudio_endpoint.status }}"
+        that:
+          - >-
+            labelstudio_postgres_projects.stdout_lines ==
+            [labelstudio_molecule_project_title ~ '|' ~ labelstudio_molecule_project_description]
+        fail_msg: >-
+          The `{{ labelstudio_database_name }}` database holds
+          {{ labelstudio_postgres_projects.stdout_lines }}, not the
+          `{{ labelstudio_molecule_project_title }}` that was created over the API
+          {{ ('(psql said: ' ~ (labelstudio_postgres_projects.stderr | trim) ~ ')') if labelstudio_postgres_projects.stderr | trim else '' }}
+        success_msg: >-
+          The `{{ labelstudio_database_name }}` Postgres database holds the project created
+          over the API ({{ labelstudio_postgres_projects.stdout | trim }})
 
-    - name: Show Label Studio systemd service status summary
+    # The administrator was created by Label Studio itself at first start, out of
+    # the env file the role rendered - a different path into the database than
+    # the API call above. Finding it in the same database proves both write to
+    # the backend this scenario configured.
+    #
+    # Exactly one user: the intruder the shared checks tried to sign up was
+    # turned away, and this is where that refusal is confirmed to have kept a row
+    # out of the database rather than merely returned an unfriendly status.
+    - name: Read the users Label Studio stored, out of the Postgres database
+      ansible.builtin.command:
+        argv: "{{ labelstudio_verify_psql + ['--command=' ~ labelstudio_verify_user_sql] }}"
+      register: labelstudio_postgres_users
+      changed_when: false
+      failed_when: false
+
+    - name: Assert that the Postgres database holds only the administrator the role configured
+      ansible.builtin.assert:
+        that: labelstudio_postgres_users.stdout_lines == [labelstudio_molecule_admin_email]
+        fail_msg: >-
+          The `{{ labelstudio_database_name }}` database holds users
+          {{ labelstudio_postgres_users.stdout_lines }}, rather than only the
+          `{{ labelstudio_molecule_admin_email }}` the role configured
+          {{ ('(psql said: ' ~ (labelstudio_postgres_users.stderr | trim) ~ ')') if labelstudio_postgres_users.stderr | trim else '' }}
+        success_msg: >-
+          The Postgres database holds `{{ labelstudio_molecule_admin_email }}` and nobody else,
+          so the sign-up attempt wrote nothing
+
+    - name: Check whether Label Studio also wrote a SQLite database
+      ansible.builtin.stat:
+        path: "{{ labelstudio_molecule_sqlite_path }}"
+      register: labelstudio_sqlite_file
+
+    # The counterpart of the checks above. Label Studio's settings fall back to
+    # SQLite whenever `DJANGO_DB` does not reach the process, and it would then
+    # have a database of its own that worked - every shared check would still
+    # pass, and the rows would simply not be the ones Postgres was asked for.
+    - name: Assert that Label Studio did not fall back to SQLite
+      ansible.builtin.assert:
+        that: not labelstudio_sqlite_file.stat.exists
+        fail_msg: >-
+          Label Studio wrote a SQLite database at `{{ labelstudio_molecule_sqlite_path }}`
+          despite being pointed at Postgres
+        success_msg: "Label Studio wrote no SQLite database, so Postgres is its only store"
+
+    - name: Show the Postgres verification summary
       ansible.builtin.debug:
         msg:
-          - "Label Studio systemd: {{ labelstudio_service.status.ActiveState }}"
-          - "Label Studio HTTP: {{ labelstudio_endpoint.status }}"
+          - "postgres ({{ labelstudio_database_name }}): {{ labelstudio_postgres_projects.stdout | trim }}"
+          - "users: {{ labelstudio_postgres_users.stdout | trim }}"
+          - "sqlite fallback at {{ labelstudio_molecule_sqlite_path }}: {{ labelstudio_sqlite_file.stat.exists }}"
