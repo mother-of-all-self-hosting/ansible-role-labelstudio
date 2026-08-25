@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2023, 2024 Nikita Chernyi
-# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023-2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Gergely Horváth
 # SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
 # SPDX-FileCopyrightText: 2025 MASH project contributors
@@ -49,7 +49,9 @@ labelstudio_container_network_deletion_enabled: true
 # Takes an "<ip>:<port>" value (e.g. "127.0.0.1:4533"), just a port number or an empty string to not expose.
 labelstudio_container_http_host_bind_port: ""
 
-# The port number in the container
+# The port number that Label Studio listens on inside the container.
+# It reaches the process as `PORT` (see `../templates/env.j2`), so changing it moves the
+# listener, the container-side end of the port mapping and the Traefik service label together.
 labelstudio_container_http_port: 8080
 
 # A list of additional container networks that the container would be connected to.
