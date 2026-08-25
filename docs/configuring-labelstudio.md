@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2020 Chris van Dijk
 SPDX-FileCopyrightText: 2020 Dominik Zajac
 SPDX-FileCopyrightText: 2020 Mickaël Cornière
 SPDX-FileCopyrightText: 2020-2024 MDAD project contributors
-SPDX-FileCopyrightText: 2020-2024 Slavi Pantaleev
+SPDX-FileCopyrightText: 2020-2026 Slavi Pantaleev
 SPDX-FileCopyrightText: 2022 François Darveau
 SPDX-FileCopyrightText: 2022 Julian Foad
 SPDX-FileCopyrightText: 2022 Warren Bailey
@@ -78,15 +78,21 @@ Set `sqlite` to use SQLite. The SQLite database is stored in the directory speci
 
 For other settings, check variables such as `labelstudio_database_*` on [`defaults/main.yml`](../defaults/main.yml).
 
-### Setting administrator's account details (optional)
+### Creating the administrator account
 
-It is possible to create and admin user on the first start by adding the following configuration to your `vars.yml` file:
+Who ends up owning your instance is decided on its first start, so it is worth deciding it yourself.
+
+If you tell Label Studio about an administrator, it creates that account while setting its database up, and refuses every sign-up that does not come through an invitation link:
 
 ```yml
 labelstudio_environment_variables_disable_signup_without_link: true
 labelstudio_environment_variables_username: "admin-username"
 labelstudio_environment_variables_password: "admin-user-password"
 ```
+
+If you do not, Label Studio serves an open registration form at `/user/signup/`, and whoever submits it first becomes the first user of the instance and the owner of its organization. Since this role publishes Label Studio on a public hostname, that is a race with the internet — so setting the three variables above before the first installation is strongly recommended.
+
+An invitation link for further accounts is available in the web interface under *Organization* → *Members*.
 
 ### Extending the configuration
 
@@ -110,7 +116,7 @@ If you use the MASH playbook, the shortcut commands with the [`just` program](ht
 
 After running the command for installation, Label Studio becomes available at the specified hostname like `https://example.com`.
 
-To get started, open the URL with a web browser, and register the account.
+To get started, open the URL with a web browser and log in as the administrator you configured above. If you did not configure one, the page invites you to register an account — do so immediately, because until somebody does, the invitation is open to everyone who finds the hostname.
 
 ## Troubleshooting
 
