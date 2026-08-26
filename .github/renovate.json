@@ -5,6 +5,6 @@
     "`versioning=semver` on the annotation in defaults/main.yml is what keeps that decision on real releases: of the 7384 tags heartexlabs/label-studio publishes, strict semver leaves the 44 `X.Y.Z` ones and discards the release-candidate builds (`1.13.0rc<sha>`), the `.post0` re-releases and the branch flavours."
   ],
   "extends": [
-    "github>mother-of-all-self-hosting/renovate-config#v1.0.0"
+    "github>mother-of-all-self-hosting/renovate-config#v1.1.0"
   ]
 }
