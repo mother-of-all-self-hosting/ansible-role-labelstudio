@@ -29,7 +29,7 @@
   tasks:
     - name: Run the checks shared by all Label Studio scenarios
       ansible.builtin.include_tasks:
-        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/resources/tasks/verify_labelstudio.yml"
+        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
 
     # This scenario sets `labelstudio_database_type` to `sqlite`, so the store
     # has to be the file inside the directory the role bind-mounts. Reading the
