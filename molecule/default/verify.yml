@@ -31,11 +31,7 @@
       ansible.builtin.include_tasks:
         file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
 
-    # This scenario sets `labelstudio_database_type` to `sqlite`, so the store
-    # has to be the file inside the directory the role bind-mounts. Reading the
-    # project straight out of that file - rather than trusting the absence of
-    # `DJANGO_DB` from the env file - is what proves SQLite is the backend
-    # actually carrying the data, and that the bind mount is where it landed.
+    # Verify Label Studio stores data on the database actually by reading the project straight out of that file.
     - name: Check that Label Studio wrote a SQLite database where the role mounts one
       ansible.builtin.stat:
         path: "{{ labelstudio_molecule_sqlite_path }}"

@@ -41,11 +41,8 @@
       ansible.builtin.include_tasks:
         file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
 
-    # Pointing `labelstudio_database_type` at `postgres` is only worth testing if
-    # it actually moves the data. Asking Postgres itself for the project that was
-    # created over the API is what settles that: a `DJANGO_DB=default` in the env
-    # file would look just as convincing while Label Studio quietly kept its own
-    # SQLite file.
+    # Verify Label Studio stores data on the database actually by asking Postgres for the project that was
+    # created over the API.
     #
     # `failed_when: false` leaves the verdict to the assertion below, so that a
     # Label Studio which never created a schema here reports as the wrong rows
