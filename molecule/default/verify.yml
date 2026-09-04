@@ -103,9 +103,9 @@
           The SQLite database holds `{{ labelstudio_molecule_admin_email }}` and nobody else,
           so the sign-up attempt wrote nothing
 
-    - name: Show the SQLite verification summary
+    - name: Show the SQLite for Label Studio verification summary
       ansible.builtin.debug:
         msg:
-          - "sqlite: {{ labelstudio_molecule_sqlite_path }} ({{ labelstudio_sqlite_file.stat.size }} bytes)"
-          - "projects: {{ labelstudio_sqlite_projects.stdout | trim }}"
-          - "users: {{ labelstudio_sqlite_users.stdout | trim }}"
+          - "Label Studio SQLite: {{ labelstudio_molecule_sqlite_path }} ({{ labelstudio_sqlite_file.stat.size }} bytes)"
+          - "Label Studio projects: {{ labelstudio_sqlite_projects.stdout | trim }}"
+          - "Label Studio users: {{ labelstudio_sqlite_users.stdout | trim }}"

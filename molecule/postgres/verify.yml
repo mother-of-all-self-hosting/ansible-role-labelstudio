@@ -113,9 +113,9 @@
           despite being pointed at Postgres
         success_msg: "Label Studio wrote no SQLite database, so Postgres is its only store"
 
-    - name: Show the Postgres verification summary
+    - name: Show the Postgres for Label Studio verification summary
       ansible.builtin.debug:
         msg:
-          - "postgres ({{ labelstudio_database_name }}): {{ labelstudio_postgres_projects.stdout | trim }}"
-          - "users: {{ labelstudio_postgres_users.stdout | trim }}"
-          - "sqlite fallback at {{ labelstudio_molecule_sqlite_path }}: {{ labelstudio_sqlite_file.stat.exists }}"
+          - "Label Studio Postgres ({{ labelstudio_database_name }}): {{ labelstudio_postgres_projects.stdout | trim }}"
+          - "Label Studio users: {{ labelstudio_postgres_users.stdout | trim }}"
+          - "Label Studio sqlite fallback at {{ labelstudio_molecule_sqlite_path }}: {{ labelstudio_sqlite_file.stat.exists }}"

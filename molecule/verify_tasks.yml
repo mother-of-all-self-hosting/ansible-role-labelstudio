@@ -506,11 +506,11 @@
 - name: Show the shared Label Studio verification summary
   ansible.builtin.debug:
     msg:
-      - "systemd: {{ labelstudio_service.status.ActiveState }}, restarts {{ labelstudio_restarts_after.status.NRestarts }}"
-      - "unreachable database: exited rc={{ labelstudio_nodb_control.rc }}"
-      - "anonymous visitor: {{ labelstudio_root.status }} to {{ labelstudio_root.location }} on port {{ labelstudio_container_http_port }}"
-      - "version: {{ labelstudio_reported_version }} from {{ labelstudio_container.Config.Image }}"
-      - "refusals: anonymous API {{ labelstudio_anonymous.status }}, wrong password {{ labelstudio_bad_login.status }} (whoami {{ labelstudio_bad_login_whoami.status }})"
-      - "sign-up: role {{ labelstudio_signup_attempt.status }}, unconfigured image {{ labelstudio_stock_signup_attempt.status }}"
-      - "administrator: {{ labelstudio_whoami.json.email }}"
-      - "round trip: project {{ labelstudio_created_project.json.id }} '{{ labelstudio_read_project.json.title }}', absent id {{ labelstudio_read_absent.status }}"
+      - "Label Studio systemd: {{ labelstudio_service.status.ActiveState }}, restarts {{ labelstudio_restarts_after.status.NRestarts }}"
+      - "Label Studio unreachable database: exited rc={{ labelstudio_nodb_control.rc }}"
+      - "Label Studio anonymous visitor: {{ labelstudio_root.status }} to {{ labelstudio_root.location }} on port {{ labelstudio_container_http_port }}"
+      - "Label Studio version: {{ labelstudio_reported_version }} from {{ labelstudio_container.Config.Image }}"
+      - "Label Studio refusals: anonymous API {{ labelstudio_anonymous.status }}, wrong password {{ labelstudio_bad_login.status }} (whoami {{ labelstudio_bad_login_whoami.status }})"
+      - "Label Studio sign-up: role {{ labelstudio_signup_attempt.status }}, unconfigured image {{ labelstudio_stock_signup_attempt.status }}"
+      - "Label Studio administrator: {{ labelstudio_whoami.json.email }}"
+      - "Label Studio round trip: project {{ labelstudio_created_project.json.id }} '{{ labelstudio_read_project.json.title }}', absent id {{ labelstudio_read_absent.status }}"
