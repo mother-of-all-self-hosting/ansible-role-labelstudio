@@ -175,14 +175,14 @@
       Label Studio dies on an unreachable database (rc={{ labelstudio_nodb_control.rc }},
       OperationalError), so the instance answering above has a database that works
 
-- name: Ask Label Studio which version it is
+- name: Query the version of the running Label Studio
   ansible.builtin.uri:
     url: "{{ labelstudio_verify_url }}/version"
     return_content: true
     status_code: [200]
   register: labelstudio_version_page
 
-- name: Make sense of the version Label Studio reports
+- name: Determine the version of the running Label Studio
   ansible.builtin.set_fact:
     labelstudio_reported_version: "{{ labelstudio_version_page.content | regex_search('\"release\": \"([^\"]+)\"', '\\1') | first | default('') }}"
 
