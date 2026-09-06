@@ -31,13 +31,13 @@
     file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
     name: labelstudio_defaults
 
-- name: Read the Label Studio container the role created
+- name: Inspect Label Studio container
   ansible.builtin.command:
     cmd: "docker container inspect {{ labelstudio_molecule_container }}"
   register: labelstudio_container_raw
   changed_when: false
 
-- name: Make sense of the Label Studio container
+- name: Parse the Label Studio container definition
   ansible.builtin.set_fact:
     labelstudio_container: "{{ (labelstudio_container_raw.stdout | from_json)[0] }}"
 
