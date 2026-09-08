@@ -63,9 +63,9 @@
 - name: Start a Label Studio with none of the role's configuration
   ansible.builtin.command:
     cmd: >-
-      docker run --detach
+      docker run -d
       --name {{ labelstudio_verify_stock_container }}
-      --publish 127.0.0.1:{{ labelstudio_molecule_stock_port }}:8080
+      -p 127.0.0.1:{{ labelstudio_molecule_stock_port }}:8080
       {{ labelstudio_container.Config.Image }}
   changed_when: true
 
