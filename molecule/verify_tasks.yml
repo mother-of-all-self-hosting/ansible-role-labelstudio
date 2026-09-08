@@ -96,7 +96,7 @@
 - name: Retrieve the Label Studio systemd service log for debugging
   when: labelstudio_debug_service_enabled | bool
   ansible.builtin.command:
-    cmd: journalctl -xeu labelstudio.service
+    cmd: journalctl --no-pager --output=cat --unit=labelstudio.service
   changed_when: false
 
 # Label Studio sends an anonymous visitor to its login page. `follow_redirects:
