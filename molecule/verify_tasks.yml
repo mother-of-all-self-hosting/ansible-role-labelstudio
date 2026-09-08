@@ -496,18 +496,18 @@
 - name: Sample the Label Studio restart counter again
   ansible.builtin.systemd_service:
     name: labelstudio.service
-  register: labelstudio_restarts_after
+  register: labelstudio_service_after
 
 - name: Assert Label Studio did not restart while it was up
   ansible.builtin.assert:
-    that: labelstudio_restarts_after.status.NRestarts == labelstudio_restarts_before.status.NRestarts
+    that: labelstudio_service_after.status.NRestarts == labelstudio_restarts_before.status.NRestarts
     fail_msg: >-
       Label Studio restarted while it was supposedly up
       ({{ labelstudio_restarts_before.status.NRestarts }} to
-      {{ labelstudio_restarts_after.status.NRestarts }}), so `active` was hiding a crash loop
+      {{ labelstudio_service_after.status.NRestarts }}), so `active` was hiding a crash loop
     success_msg: >-
       Label Studio did not restart over 45 seconds of watching
-      (restarts so far: {{ labelstudio_restarts_after.status.NRestarts }})
+      (restarts so far: {{ labelstudio_service_after.status.NRestarts }})
 
 - name: Show the shared Label Studio verification summary
   ansible.builtin.debug:
