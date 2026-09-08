@@ -186,11 +186,11 @@
     url: "{{ labelstudio_verify_url }}/version"
     return_content: true
     status_code: [200]
-  register: labelstudio_version_page
+  register: labelstudio_version_reported
 
 - name: Determine the version of the running Label Studio
   ansible.builtin.set_fact:
-    labelstudio_reported_version: "{{ labelstudio_version_page.content | regex_search('\"release\": \"([^\"]+)\"', '\\1') | first | default('') }}"
+    labelstudio_reported_version: "{{ labelstudio_version_reported.content | regex_search('\"release\": \"([^\"]+)\"', '\\1') | first | default('') }}"
 
 # `/version` is served by the running process out of its own package metadata,
 # so comparing it with the leaf literal Renovate bumps ties what is actually
