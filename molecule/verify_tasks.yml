@@ -28,7 +28,7 @@
   # resolved against an empty namespace - and never a value a scenario tunes,
   # which this file takes from the scenario's group_vars instead.
   ansible.builtin.include_vars:
-    file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+    file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
     name: labelstudio_defaults
 
 - name: Inspect Label Studio container
