@@ -29,88 +29,88 @@
   tasks:
     - name: Verify that Label Studio works
       block:
-    - name: Run the checks shared by all Label Studio scenarios
-      ansible.builtin.include_tasks:
-        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
+        - name: Run the checks shared by all Label Studio scenarios
+          ansible.builtin.include_tasks:
+            file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
 
-    # Verify Label Studio stores data on the database actually by reading the project straight out of that file.
-    - name: Check that Label Studio wrote a SQLite database where the role mounts one
-      ansible.builtin.stat:
-        path: "{{ labelstudio_molecule_sqlite_path }}"
-      register: labelstudio_sqlite_file
+        # Verify Label Studio stores data on the database actually by reading the project straight out of that file.
+        - name: Check that Label Studio wrote a SQLite database where the role mounts one
+          ansible.builtin.stat:
+            path: "{{ labelstudio_molecule_sqlite_path }}"
+          register: labelstudio_sqlite_file
 
-    - name: Assert that Label Studio's SQLite database is in the role's data path
-      ansible.builtin.assert:
-        that:
-          - labelstudio_sqlite_file.stat.exists
-          - labelstudio_sqlite_file.stat.size > 0
-        fail_msg: >-
-          There is no SQLite database at `{{ labelstudio_molecule_sqlite_path }}`, so whatever
-          Label Studio stored did not land in the directory `labelstudio_data_path` names
-        success_msg: >-
-          Label Studio's SQLite database is at `{{ labelstudio_molecule_sqlite_path }}`
-          ({{ labelstudio_sqlite_file.stat.size }} bytes), inside the role's data path
+        - name: Assert that Label Studio's SQLite database is in the role's data path
+          ansible.builtin.assert:
+            that:
+              - labelstudio_sqlite_file.stat.exists
+              - labelstudio_sqlite_file.stat.size > 0
+            fail_msg: >-
+              There is no SQLite database at `{{ labelstudio_molecule_sqlite_path }}`, so whatever
+              Label Studio stored did not land in the directory `labelstudio_data_path` names
+            success_msg: >-
+              Label Studio's SQLite database is at `{{ labelstudio_molecule_sqlite_path }}`
+              ({{ labelstudio_sqlite_file.stat.size }} bytes), inside the role's data path
 
-    - name: Read the projects Label Studio stored, out of its SQLite database
-      ansible.builtin.command:
-        argv:
-          - python3
-          - "-c"
-          - "{{ labelstudio_verify_sqlite_query }}"
-          - "{{ labelstudio_molecule_sqlite_path }}"
-          - "SELECT title, description FROM project ORDER BY id"
-      register: labelstudio_sqlite_projects
-      changed_when: false
+        - name: Read the projects Label Studio stored, out of its SQLite database
+          ansible.builtin.command:
+            argv:
+              - python3
+              - "-c"
+              - "{{ labelstudio_verify_sqlite_query }}"
+              - "{{ labelstudio_molecule_sqlite_path }}"
+              - "SELECT title, description FROM project ORDER BY id"
+          register: labelstudio_sqlite_projects
+          changed_when: false
 
-    - name: Assert that the SQLite database holds the project created over the API
-      ansible.builtin.assert:
-        that:
-          - >-
-            (labelstudio_sqlite_projects.stdout | trim) ==
-            (labelstudio_molecule_project_title ~ '|' ~ labelstudio_molecule_project_description)
-        fail_msg: >-
-          `{{ labelstudio_molecule_sqlite_path }}` holds
-          `{{ labelstudio_sqlite_projects.stdout | trim }}`, not the
-          `{{ labelstudio_molecule_project_title }}` that was created over the API
-        success_msg: >-
-          The SQLite database at `{{ labelstudio_molecule_sqlite_path }}` holds the project
-          created over the API ({{ labelstudio_sqlite_projects.stdout | trim }})
+        - name: Assert that the SQLite database holds the project created over the API
+          ansible.builtin.assert:
+            that:
+              - >-
+                (labelstudio_sqlite_projects.stdout | trim) ==
+                (labelstudio_molecule_project_title ~ '|' ~ labelstudio_molecule_project_description)
+            fail_msg: >-
+              `{{ labelstudio_molecule_sqlite_path }}` holds
+              `{{ labelstudio_sqlite_projects.stdout | trim }}`, not the
+              `{{ labelstudio_molecule_project_title }}` that was created over the API
+            success_msg: >-
+              The SQLite database at `{{ labelstudio_molecule_sqlite_path }}` holds the project
+              created over the API ({{ labelstudio_sqlite_projects.stdout | trim }})
 
-    # The administrator was created by Label Studio itself at first start, out of
-    # the env file the role rendered - a different path into the database than
-    # the API call above. Finding it in the same file proves both write to the
-    # one store this scenario configured.
-    - name: Read the users Label Studio stored, out of its SQLite database
-      ansible.builtin.command:
-        argv:
-          - python3
-          - "-c"
-          - "{{ labelstudio_verify_sqlite_query }}"
-          - "{{ labelstudio_molecule_sqlite_path }}"
-          - "SELECT email FROM htx_user ORDER BY id"
-      register: labelstudio_sqlite_users
-      changed_when: false
+        # The administrator was created by Label Studio itself at first start, out of
+        # the env file the role rendered - a different path into the database than
+        # the API call above. Finding it in the same file proves both write to the
+        # one store this scenario configured.
+        - name: Read the users Label Studio stored, out of its SQLite database
+          ansible.builtin.command:
+            argv:
+              - python3
+              - "-c"
+              - "{{ labelstudio_verify_sqlite_query }}"
+              - "{{ labelstudio_molecule_sqlite_path }}"
+              - "SELECT email FROM htx_user ORDER BY id"
+          register: labelstudio_sqlite_users
+          changed_when: false
 
-    # Exactly one user: the intruder the shared checks tried to sign up was
-    # turned away, and this is where that refusal is confirmed to have kept a row
-    # out of the database rather than merely returned an unfriendly status.
-    - name: Assert that the SQLite database holds only the administrator the role configured
-      ansible.builtin.assert:
-        that: (labelstudio_sqlite_users.stdout | trim) == labelstudio_molecule_admin_email
-        fail_msg: >-
-          `{{ labelstudio_molecule_sqlite_path }}` holds users
-          `{{ labelstudio_sqlite_users.stdout | trim }}`, rather than only the
-          `{{ labelstudio_molecule_admin_email }}` the role configured
-        success_msg: >-
-          The SQLite database holds `{{ labelstudio_molecule_admin_email }}` and nobody else,
-          so the sign-up attempt wrote nothing
+        # Exactly one user: the intruder the shared checks tried to sign up was
+        # turned away, and this is where that refusal is confirmed to have kept a row
+        # out of the database rather than merely returned an unfriendly status.
+        - name: Assert that the SQLite database holds only the administrator the role configured
+          ansible.builtin.assert:
+            that: (labelstudio_sqlite_users.stdout | trim) == labelstudio_molecule_admin_email
+            fail_msg: >-
+              `{{ labelstudio_molecule_sqlite_path }}` holds users
+              `{{ labelstudio_sqlite_users.stdout | trim }}`, rather than only the
+              `{{ labelstudio_molecule_admin_email }}` the role configured
+            success_msg: >-
+              The SQLite database holds `{{ labelstudio_molecule_admin_email }}` and nobody else,
+              so the sign-up attempt wrote nothing
 
-    - name: Show the SQLite for Label Studio verification summary
-      ansible.builtin.debug:
-        msg:
-          - "Label Studio SQLite: {{ labelstudio_molecule_sqlite_path }} ({{ labelstudio_sqlite_file.stat.size }} bytes)"
-          - "Label Studio projects: {{ labelstudio_sqlite_projects.stdout | trim }}"
-          - "Label Studio users: {{ labelstudio_sqlite_users.stdout | trim }}"
+        - name: Show the SQLite for Label Studio verification summary
+          ansible.builtin.debug:
+            msg:
+              - "Label Studio SQLite: {{ labelstudio_molecule_sqlite_path }} ({{ labelstudio_sqlite_file.stat.size }} bytes)"
+              - "Label Studio projects: {{ labelstudio_sqlite_projects.stdout | trim }}"
+              - "Label Studio users: {{ labelstudio_sqlite_users.stdout | trim }}"
 
       rescue:
         # Whatever went wrong, the reason is almost always in the systemd service log.
