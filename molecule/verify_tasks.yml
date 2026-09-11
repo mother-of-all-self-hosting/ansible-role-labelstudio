@@ -73,13 +73,14 @@
 # The unit is up and Label Studio is answering
 # ----------------------------------------------------------------------
 
-- name: Wait for the Label Studio systemd service to become active (up to 180s)
+- name: Wait for the Label Studio systemd services to become active (up to 180s each)
   ansible.builtin.systemd_service:
-    name: labelstudio.service
-  register: labelstudio_service
-  until: labelstudio_service.status.ActiveState == 'active'
+    name: "{{ item }}"
+  register: labelstudio_services
+  until: labelstudio_services.status.ActiveState == 'active'
   retries: 36
   delay: 5
+  loop: "{{ labelstudio_verify_units }}"
   # So that giving up is reported by the assertion below rather than as a
   # wall of systemd unit properties.
   failed_when: false
@@ -87,17 +88,20 @@
 # `Restart=always` in the systemd unit means that even a container which crashes
 # and gets restarted reads as active here, so this is a precondition rather than
 # a result.
-- name: Assert the Label Studio systemd service is active
+- name: Assert the Label Studio systemd services are active
   ansible.builtin.assert:
-    that: labelstudio_service.status.ActiveState == 'active'
-    fail_msg: "labelstudio.service is not active ({{ labelstudio_service.status.ActiveState }})"
-    success_msg: "labelstudio.service is active"
+    that: labelstudio_services.results | map(attribute='status.ActiveState') | unique | list == ['active']
+    fail_msg: >-
+      Not every service is active:
+      {{ dict(labelstudio_verify_units | zip(labelstudio_services.results | map(attribute='status.ActiveState'))) }}
+    success_msg: "Every systemd service is active"
 
-- name: Retrieve the Label Studio systemd service log for debugging
+- name: Retrieve the Label Studio systemd services log for debugging
   when: labelstudio_debug_service_enabled | bool
   ansible.builtin.command:
-    cmd: journalctl --no-pager --output=cat --unit=labelstudio.service
+    cmd: "journalctl --no-pager --output=cat --unit={{ item }}"
   changed_when: false
+  loop: "{{ labelstudio_verify_units }}"
 
 # Label Studio sends an anonymous visitor to its login page. `follow_redirects:
 # none` keeps that honest: a role that had installed nothing would leave this
@@ -512,7 +516,7 @@
 - name: Show the shared Label Studio verification summary
   ansible.builtin.debug:
     msg:
-      - "Label Studio systemd: {{ labelstudio_service.status.ActiveState }}, {{ labelstudio_service_after.status.NRestarts }} restart(s)"
+      - "Label Studio systemd: {% for unit, state in labelstudio_verify_units | zip(labelstudio_services.results | map(attribute='status.ActiveState')) %}{{ unit }} ({{ state }}){% if not loop.last %}, {% endif %}{% endfor %}"
       - "Label Studio version: {{ labelstudio_reported_version }} from {{ labelstudio_container.Config.Image }}"
       - "Label Studio unreachable database: exited rc={{ labelstudio_nodb_control.rc }}"
       - "Label Studio anonymous visitor: {{ labelstudio_root.status }} to {{ labelstudio_root.location }} on port {{ labelstudio_container_http_port }}"

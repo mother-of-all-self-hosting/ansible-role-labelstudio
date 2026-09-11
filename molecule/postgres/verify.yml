@@ -36,6 +36,10 @@
     labelstudio_verify_project_sql: "SELECT title || '|' || description FROM project ORDER BY id"
     labelstudio_verify_user_sql: "SELECT email FROM htx_user ORDER BY id"
 
+    labelstudio_verify_units:
+      - labelstudio.service
+      - postgres.service
+
   tasks:
     - name: Verify that Label Studio works
       block:
