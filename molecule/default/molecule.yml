@@ -30,6 +30,7 @@ provisioner:
       all:
         # Helper variables
         labelstudio_debug_service_enabled: false
+        labelstudio_restarts_check_enabled: true
 
         # The container the role creates, named after `labelstudio_identifier`.
         labelstudio_molecule_container: labelstudio

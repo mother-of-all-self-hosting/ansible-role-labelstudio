@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -108,9 +108,18 @@
               The SQLite database holds `{{ labelstudio_molecule_admin_email }}` and nobody else,
               so the sign-up attempt wrote nothing
 
-        - name: Show the SQLite for Label Studio verification summary
+        - name: Show the Label Studio verification summary
           ansible.builtin.debug:
             msg:
+              - "Label Studio systemd: {% for unit, state in labelstudio_verify_units | zip(labelstudio_services.results | map(attribute='status.ActiveState')) %}{{ unit }} ({{ state }}){% if not loop.last %}, {% endif %}{% endfor %}"
+              - "Label Studio restarts: {% for unit, restarts in labelstudio_verify_units | zip(labelstudio_restarts_after.results | map(attribute='status.NRestarts')) %}{{ restarts }} ({{ unit }}){% if not loop.last %}, {% endif %}{% endfor %}"
+              - "Label Studio version: {{ labelstudio_reported_version }} from {{ labelstudio_container.Config.Image }}"
+              - "Label Studio unreachable database: exited rc={{ labelstudio_nodb_control.rc }}"
+              - "Label Studio anonymous visitor: {{ labelstudio_root.status }} to {{ labelstudio_root.location }} on port {{ labelstudio_container_http_port }}"
+              - "Label Studio refusals: anonymous API {{ labelstudio_anonymous.status }}, wrong password {{ labelstudio_bad_login.status }} (whoami {{ labelstudio_bad_login_whoami.status }})"
+              - "Label Studio sign-up: role {{ labelstudio_signup_attempt.status }}, unconfigured image {{ labelstudio_stock_signup_attempt.status }}"
+              - "Label Studio administrator: {{ labelstudio_whoami.json.email }}"
+              - "Label Studio round trip: project {{ labelstudio_created_project.json.id }} '{{ labelstudio_read_project.json.title }}', absent id {{ labelstudio_read_absent.status }}"
               - "Label Studio SQLite: {{ labelstudio_molecule_sqlite_path }} ({{ labelstudio_sqlite_file.stat.size }} bytes)"
               - "Label Studio projects: {{ labelstudio_sqlite_projects.stdout | trim }}"
               - "Label Studio users: {{ labelstudio_sqlite_users.stdout | trim }}"
