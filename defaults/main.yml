@@ -17,7 +17,7 @@ labelstudio_base_path: "/{{ labelstudio_identifier }}"
 labelstudio_data_path: "{{ labelstudio_base_path }}/data"
 
 # renovate: datasource=docker depName=heartexlabs/label-studio versioning=semver
-labelstudio_version: 1.23.0
+labelstudio_version: 1.23.2
 
 labelstudio_uid: ""
 labelstudio_gid: ""
