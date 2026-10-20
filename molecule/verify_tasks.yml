@@ -192,11 +192,17 @@
     status_code: [200]
   register: labelstudio_version_reported
 
+# `release` comes from the Python package metadata, which upstream does not
+# always bump for patch releases (the 1.23.2 image still says 1.23.0 there).
+# `label-studio-os-backend.version` is written from `git describe` when the
+# image is built (e.g. `1.23.2+0.gdf96d79`), so its part before `+` is the tag
+# the running code was actually built from. The page is JSON wrapped in
+# `<pre>` and served as HTML, so it is matched as text rather than parsed.
 - name: Determine the version of the running Label Studio
   ansible.builtin.set_fact:
-    labelstudio_reported_version: "{{ labelstudio_version_reported.content | regex_search('\"release\": \"([^\"]+)\"', '\\1') | first | default('') }}"
+    labelstudio_reported_version: "{{ labelstudio_version_reported.content | regex_search('\"label-studio-os-backend\": \\{[^}]*\"version\": \"([^\"+]+)', '\\1') | first | default('') }}"
 
-# `/version` is served by the running process out of its own package metadata,
+# `/version` is served by the running process out of its own build metadata,
 # so comparing it with the leaf literal Renovate bumps ties what is actually
 # serving to what the role claims to install. The image tag is checked too, so
 # that a stale container left behind by an earlier run cannot pass for this one.
