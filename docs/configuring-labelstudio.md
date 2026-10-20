@@ -30,6 +30,8 @@ See the project's [documentation](https://labelstud.io/quick-start/) to learn wh
 
 To run an Label Studio it is necessary to prepare a database. You can use [Postgres](https://www.postgresql.org/) or [SQLite](https://www.sqlite.org/). The SQLite database file will be automatically created by the service if it is enabled.
 
+If you use Postgres, note that Label Studio 1.23.1 and later require **PostgreSQL 14 or higher**.
+
 If you are looking for an Ansible role for Postgres, you can check out [this role (ansible-role-postgres)](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
 ## Adjusting the playbook configuration
@@ -93,6 +95,21 @@ labelstudio_environment_variables_password: "admin-user-password"
 If you do not, Label Studio serves an open registration form at `/user/signup/`, and whoever submits it first becomes the first user of the instance and the owner of its organization. Since this role publishes Label Studio on a public hostname, that is a race with the internet — so setting the three variables above before the first installation is strongly recommended.
 
 An invitation link for further accounts is available in the web interface under *Organization* → *Members*.
+
+### Connecting to services on a local or private network
+
+Label Studio blocks outbound requests to private or local network addresses by default (this role sets `SSRF_PROTECTION_ENABLED=true` via `labelstudio_environment_variables_ssrf_protection_enabled`). Since Label Studio 1.23.1, ML backends on `localhost` or a private network are also blocked (`ML_BLOCK_LOCAL_IP=true`), and since 1.23.2, image exports (`COCO_WITH_IMAGES`, `YOLO_WITH_IMAGES`, etc.) leave out media hosted on such addresses.
+
+If your ML backend, MinIO, Redis, webhook receiver or media server runs on a local or private network (e.g. on the same server, in another container), you can relax these protections by adding the following configuration to your `vars.yml` file:
+
+```yaml
+labelstudio_environment_variables_ssrf_protection_enabled: false
+
+labelstudio_environment_variables_additional_variables: |
+  ML_BLOCK_LOCAL_IP=false
+```
+
+Alternatively, keep the protection enabled and adjust the blocked ranges with the `USE_DEFAULT_BANNED_SUBNETS` and `USER_ADDITIONAL_BANNED_SUBNETS` environment variables. See [the upstream release notes](https://github.com/HumanSignal/label-studio/releases/tag/1.23.1) for details.
 
 ### Extending the configuration
 
