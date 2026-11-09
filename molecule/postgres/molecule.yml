@@ -92,8 +92,8 @@ provisioner:
         labelstudio_database_type: postgres
         labelstudio_database_hostname: "{{ postgres_connection_hostname }}"
         labelstudio_database_port: "{{ postgres_connection_port }}"
-        labelstudio_database_username: my_database_username
-        labelstudio_database_password: my_database_password
+        labelstudio_database_username: /#@my_database_username?%
+        labelstudio_database_password: /#@my_database_password?%
         labelstudio_database_name: labelstudio
         labelstudio_systemd_required_services_list_auto: |
           {{
