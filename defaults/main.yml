@@ -254,6 +254,8 @@ labelstudio_database_name: labelstudio
 # Control the DJANGO_DB environment variable
 labelstudio_environment_variables_django_db: default
 
+labelstudio_environment_variables_csrf_trusted_origins: "{{ labelstudio_scheme }}://{{ labelstudio_hostname }}"
+
 # Control the SSRF_PROTECTION_ENABLED django env var
 labelstudio_environment_variables_ssrf_protection_enabled: true
 
