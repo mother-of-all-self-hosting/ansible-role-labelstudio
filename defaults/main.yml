@@ -259,6 +259,8 @@ labelstudio_environment_variables_csrf_trusted_origins: "{{ labelstudio_scheme }
 # Control the SSRF_PROTECTION_ENABLED django env var
 labelstudio_environment_variables_ssrf_protection_enabled: true
 
+labelstudio_environment_variables_label_studio_host: "{{ labelstudio_scheme }}://{{ labelstudio_hostname }}{{ labelstudio_path_prefix }}"
+
 # Control if Minio is used as storage backend
 labelstudio_minio_backend_enabled: false
 

@@ -24,11 +24,10 @@ traefik.http.middlewares.{{ labelstudio_identifier }}-basic-auth.basicauth.users
 {% set middlewares = middlewares + [labelstudio_container_labels_traefik_compression_middleware_name] %}
 {% endif %}
 
-{% if labelstudio_container_labels_traefik_path_prefix != '/' %}
-traefik.http.middlewares.{{ labelstudio_identifier }}-slashless-redirect.redirectregex.regex=^({{ labelstudio_container_labels_traefik_path_prefix | quote }})$
-traefik.http.middlewares.{{ labelstudio_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
-{% set middlewares = middlewares + [labelstudio_identifier + '-slashless-redirect'] %}
-{% endif %}
+{#
+  Intentionally not adding redirectRegex and stripPrefix middleware.
+  Label Studio serves itself under the same prefix it sees in the LABEL_STUDIO_HOST environment variable.
+#}
 
 {% if labelstudio_container_labels_traefik_path_prefix != '/' %}
 traefik.http.middlewares.{{ labelstudio_identifier }}-strip-prefix.stripprefix.prefixes={{ labelstudio_container_labels_traefik_path_prefix }}
